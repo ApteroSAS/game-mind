@@ -5,26 +5,83 @@ public class GameManager : MonoBehaviour
 {
     public Camera mainCamera;
 
+    [SerializeField] Vector3[] playerSpawns;
+    [SerializeField] GameObject heatingStonePrefab;
+    [SerializeField] Vector3[] heatingStoneSpawns;
+
     void Start()
     {
-        // Subscribe to the event when a player is spawned
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
     }
 
-    //void OnDestroy()
-    //{
-    //    // Unsubscribe to prevent memory leaks
-    //    NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
-    //}
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            // go through all clients and set proper spawn points pls thanks
+        }
+    }
+
+    void OnDestroy()
+    {
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+    }
 
     private void OnClientConnected(ulong clientId)
     {
-        // Check if the local client is the one that connected
+        if (NetworkManager.Singleton.IsServer)
+        {
+            var playerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+
+            // Spawn and move player
+            MoveObjectOnSpawn(playerObject.transform, clientId, playerSpawns);
+
+            if (playerObject != null)
+            {
+                playerObject.GetComponent<PlayerNetwork>().AssignAttributeServerRpc();
+            }
+
+            // Spawn and move sex meter
+            var heatingStoneInstance = Instantiate(heatingStonePrefab);
+            heatingStoneInstance.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+            MoveObjectOnSpawn(heatingStoneInstance.transform, clientId, heatingStoneSpawns);
+
+            //heatingStonePrefabs[clientId].SetActive(true);
+            //heatingStonePrefabs[clientId].GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+        }
+
         if (NetworkManager.Singleton.LocalClientId == clientId)
         {
-            // Deactivate the main camera once the local player is connected
             mainCamera.gameObject.SetActive(false);
         }
     }
-}
 
+    private void MoveObjectOnSpawn(Transform transform, ulong clientId, Vector3[] spawnPoints)
+    {
+        if ((int)clientId < spawnPoints.Length)
+        {
+            Vector3 spawnPoint = spawnPoints[(int)clientId];
+            MoveObjectOnServerRpc(transform, spawnPoint);
+            Debug.Log($"Spawned object for client {clientId} at position {spawnPoint}");
+        }
+        else
+        {
+            Debug.LogError($"Spawn point not defined for client ID {clientId}");
+        }
+    }
+
+    [ServerRpc]
+    public void MoveObjectOnServerRpc(Transform transform, Vector3 newPosition)
+    {
+        transform.position = newPosition;
+
+        MoveObjectOnClientRpc(transform, newPosition);
+    }
+
+    [ClientRpc]
+    private void MoveObjectOnClientRpc(Transform transform, Vector3 newPosition)
+    {
+        transform.position = newPosition;
+    }
+
+}

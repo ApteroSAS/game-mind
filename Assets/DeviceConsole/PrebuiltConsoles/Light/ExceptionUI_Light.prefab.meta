@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 78391260511ea4b45b96dba35c2fd1ab
+timeCreated: 1454970271
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Light/ExceptionUI_Light.prefab
+  uploadId: 105553

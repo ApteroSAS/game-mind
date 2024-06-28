@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b5e3a893dce0341f3a8a029c306a83e7
+timeCreated: 1454977846
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Light/Light.unity
+  uploadId: 105553

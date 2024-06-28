@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f69df804bcf604f69a7c9cb9608a58b5
+timeCreated: 1454970260
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Light/WarningUI_Light.prefab
+  uploadId: 105553

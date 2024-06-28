@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cf5f91a2226024e13b7e0453c0e4dff5
+timeCreated: 1454970257
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Light/LogUI_Light.prefab
+  uploadId: 105553

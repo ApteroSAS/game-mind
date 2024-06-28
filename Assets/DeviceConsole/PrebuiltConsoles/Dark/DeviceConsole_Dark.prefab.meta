@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c992ccddea898433a80e86c66815fefb
+timeCreated: 1454969958
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Dark/DeviceConsole_Dark.prefab
+  uploadId: 105553

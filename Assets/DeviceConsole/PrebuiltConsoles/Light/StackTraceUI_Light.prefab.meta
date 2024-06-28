@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8e55755e3f0ec49cf95e4f4050b20700
+timeCreated: 1454970266
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Light/StackTraceUI_Light.prefab
+  uploadId: 105553

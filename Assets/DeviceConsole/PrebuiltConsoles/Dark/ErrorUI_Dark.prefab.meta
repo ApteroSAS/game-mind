@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f48ca83a9158343ed8c431b01fd00a97
+timeCreated: 1454957810
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57193
+  packageName: Device Console
+  packageVersion: 1.0
+  assetPath: Assets/DeviceConsole/PrebuiltConsoles/Dark/ErrorUI_Dark.prefab
+  uploadId: 105553

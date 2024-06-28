@@ -1,6 +1,13 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+
+public enum PlayerAttribute
+{
+    Fire,
+    Ice,
+}
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
@@ -10,29 +17,32 @@ public class PlayerNetwork : NetworkBehaviour
 
     private InputAction moveAction;
     private InputAction lookAction;
+    private InputAction interAction;
 
     private Rigidbody rb;
     private CapsuleCollider cc;
     [SerializeField] private float moveSpeed = 5;
     [SerializeField][Range(0.05f, 1f)] private float rotateSpeed = 0.5f;
     [SerializeField][Range(4, 6)] private float jumpSrength = 5;
+    [SerializeField] private LayerMask groundLayer;
 
     private Transform head;
     private Transform povCamera;
     private float groundOffset;
-    private Vector3 groundPosition;
+
+    // Network variable to sync attribute across network
+    public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
+
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
         if (!IsOwner) return;
+        base.OnNetworkSpawn();
 
         inputAction = new InputSystem_Actions();
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CapsuleCollider>();
         groundOffset = cc.height / 2 * transform.localScale.y;
-        groundPosition = transform.position;
-        groundPosition.y -= groundOffset / 2;
         head = FindChildWithTag(transform, "PlayerHead");
         povCamera = FindChildWithTag(transform, "MainCamera");
         povCamera.gameObject.SetActive(true);
@@ -53,6 +63,12 @@ public class PlayerNetwork : NetworkBehaviour
         lookAction = inputAction.Player.Look;
         lookAction.Enable();
 
+        interAction = inputAction.Player.Interact;
+        interAction.Enable();
+
+        //inputAction.Player.Interact.performed += OnInteract;
+        //inputAction.Player.Interact.Enable();
+
         inputAction.Player.Jump.performed += OnJump;
         inputAction.Player.Jump.Enable();
 
@@ -63,6 +79,10 @@ public class PlayerNetwork : NetworkBehaviour
     {
         moveAction.Disable();
         lookAction.Disable();
+        interAction.Disable();
+
+        //inputAction.Player.Interact.performed -= OnInteract;
+        //inputAction.Player.Interact.Disable();
 
         inputAction.Player.Jump.performed -= OnJump;
         inputAction.Player.Jump.Disable();
@@ -77,6 +97,7 @@ public class PlayerNetwork : NetworkBehaviour
 
         RotateCharacter();
         MoveCharacter();
+        Interact();
     }
 
     private void MoveCharacter()
@@ -108,12 +129,10 @@ public class PlayerNetwork : NetworkBehaviour
         head.localEulerAngles = new Vector3(xAxis, 0, 0);
     }
 
-    private void OnJump(InputAction.CallbackContext context)
+    public void OnJump(InputAction.CallbackContext context)
     {
-        float sphereRadius = cc.radius;
-        float checkDistance = 0.2f;
-        bool grounded = Physics.SphereCast(groundPosition, sphereRadius, Vector3.down, out _, checkDistance);
-        Debug.Log("Grounded: " + grounded);
+        if (!IsOwner) return;
+        bool grounded = IsGrounded();
         if (grounded)
         {
             Vector3 vel = rb.linearVelocity;
@@ -140,10 +159,52 @@ public class PlayerNetwork : NetworkBehaviour
         return null;
     }
 
+    private bool IsGrounded()
+    {
+        Vector3 spherePosition = transform.position + Vector3.down * (groundOffset + 0.1f); // Slightly below the character
+        float sphereRadius = cc.radius * 0.9f; // Slightly smaller than the collider radius
+
+        bool grounded = Physics.CheckSphere(spherePosition, sphereRadius, groundLayer);
+        Debug.DrawRay(spherePosition, Vector3.down * 0.1f, grounded ? Color.green : Color.red, 1f);
+        return grounded;
+    }
+
     [ServerRpc]
     private void TestServerRpc()
     {
         Debug.Log("TestServerRpc " + OwnerClientId);
+    }
+
+    [ServerRpc (RequireOwnership =false)]
+    public void AssignAttributeServerRpc()
+    {
+        if (!IsServer) return;
+
+        var playerCount = NetworkManager.Singleton.ConnectedClients.Count;
+        if (playerCount % 2 == 0)
+        {
+            NetworkAttribute.Value = PlayerAttribute.Ice;
+        }
+        else
+        {
+            NetworkAttribute.Value = PlayerAttribute.Fire;
+        }
+
+        Debug.Log($"Player {OwnerClientId} assigned attribute: {NetworkAttribute.Value}");
+    }
+
+    private void Interact()
+    {
+        float isClicked = interAction.ReadValue<float>();
+        if (isClicked == 0) return;
+
+        Physics.Raycast(povCamera.transform.position, transform.forward, out RaycastHit hit, 3f);
+        if (hit.transform == null) return;
+
+        Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
+        if (interactable == null) return;
+
+        interactable.Interact(gameObject);
     }
 
 }
