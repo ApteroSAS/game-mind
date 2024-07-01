@@ -23,8 +23,9 @@ public class PlayerNetwork : NetworkBehaviour
     private CapsuleCollider cc;
     [SerializeField] private float moveSpeed = 5;
     [SerializeField][Range(0.05f, 1f)] private float rotateSpeed = 0.5f;
-    [SerializeField][Range(4, 6)] private float jumpSrength = 5;
+    [SerializeField][Range(4, 6)] private float jumpStrength = 5;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private bool noobControls = true;
 
     private Transform head;
     private Transform povCamera;
@@ -39,7 +40,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (!IsOwner) return;
         base.OnNetworkSpawn();
 
-        inputAction = new InputSystem_Actions();
+        if(!noobControls) inputAction = new InputSystem_Actions();
         rb = GetComponent<Rigidbody>();
         cc = GetComponent<CapsuleCollider>();
         groundOffset = cc.height / 2 * transform.localScale.y;
@@ -55,6 +56,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void OnEnable()
     {
+        if (noobControls) return;
         if (inputAction == null) EditorStuff();
 
         moveAction = inputAction.Player.Move;
@@ -77,6 +79,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void OnDisable()
     {
+        if (noobControls) return;
         moveAction.Disable();
         lookAction.Disable();
         interAction.Disable();
@@ -93,11 +96,18 @@ public class PlayerNetwork : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!IsOwner) return;
-            
 
-        RotateCharacter();
-        MoveCharacter();
-        Interact();
+        if (noobControls)
+        {
+            RotateCharacterNoob();
+            MoveCharacterNoob();
+        }
+        else
+        {
+            RotateCharacter();
+            MoveCharacter();
+            Interact();
+        }
     }
 
     private void MoveCharacter()
@@ -111,6 +121,18 @@ public class PlayerNetwork : NetworkBehaviour
 
         transform.position += Time.fixedDeltaTime * moveSpeed * (transform.right * moveDirection.x);
         transform.position += Time.fixedDeltaTime * moveSpeed * (transform.forward * moveDirection.y);
+    }
+
+    private void MoveCharacterNoob()
+    {
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+            transform.position += Time.fixedDeltaTime * moveSpeed * transform.forward;
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+            transform.position += Time.fixedDeltaTime * moveSpeed * -transform.forward;
+        if (Input.GetKey(KeyCode.A))
+            transform.position += Time.fixedDeltaTime * moveSpeed * -transform.right;
+        if (Input.GetKey(KeyCode.D))
+            transform.position += Time.fixedDeltaTime * moveSpeed * transform.right;
     }
 
     private void RotateCharacter()
@@ -129,6 +151,19 @@ public class PlayerNetwork : NetworkBehaviour
         head.localEulerAngles = new Vector3(xAxis, 0, 0);
     }
 
+    private void RotateCharacterNoob()
+    {
+        if (Input.GetKey(KeyCode.LeftArrow))
+            transform.Rotate(0, -rotateSpeed, 0); 
+        if (Input.GetKey(KeyCode.RightArrow))
+            transform.Rotate(0, rotateSpeed, 0);
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            transform.Rotate(0, -45, 0);
+        if (Input.GetKeyDown(KeyCode.E))
+            transform.Rotate(0, 45, 0);
+    }
+
     public void OnJump(InputAction.CallbackContext context)
     {
         if (!IsOwner) return;
@@ -136,7 +171,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (grounded)
         {
             Vector3 vel = rb.linearVelocity;
-            vel.y = jumpSrength;
+            vel.y = jumpStrength;
             rb.linearVelocity = vel;
         }
     }

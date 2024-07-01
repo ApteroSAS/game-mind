@@ -122,11 +122,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  rotateSpeed: 0.1
-  jumpSrength: 5
+  rotateSpeed: 1
+  jumpStrength: 5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  noobControls: 1
+  NetworkAttribute:
+    m_InternalValue: 0
 --- !u!114 &1076573231713727632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,10 +194,6 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 6b444451-8a00-4d00-a97e-f47457f736a8
     m_ActionName: 'Player/Look[/Mouse/delta]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 6c2ab1b8-8984-453a-af3d-a3c78ae1679a
-    m_ActionName: 'Player/Attack[/Mouse/leftButton,/Keyboard/enter]'
   - m_PersistentCalls:
       m_Calls: []
     m_ActionId: 852140f2-7766-474d-8707-702459ba45f3
