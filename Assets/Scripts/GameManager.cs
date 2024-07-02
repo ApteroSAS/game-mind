@@ -39,10 +39,7 @@ public class GameManager : MonoBehaviour
             //if (playerObject != null)
             //    playerObject.GetComponent<PlayerAnswers>().AssignAttributeServerRpc();
 
-            // Spawn and move heatingStone
-            var heatingStoneInstance = Instantiate(heatingStonePrefab);
-            heatingStoneInstance.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-            MoveObjectOnSpawnServerRpc(heatingStoneInstance.transform, clientId, heatingStoneSpawn);
+            SpawnHeatingStone(clientId);
         }
 
         if (NetworkManager.Singleton.LocalClientId == clientId)
@@ -70,6 +67,14 @@ public class GameManager : MonoBehaviour
     private void MoveObjectOnClientRpc(Transform transform, Vector3 newPosition)
     {
         transform.position = newPosition;
+    }
+
+    private void SpawnHeatingStone(ulong clientId)
+    {
+        // Spawn and move heatingStone
+        var heatingStoneInstance = Instantiate(heatingStonePrefab, heatingStoneSpawn, Quaternion.identity);
+        heatingStoneInstance.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+        //MoveObjectOnSpawnServerRpc(heatingStoneInstance.transform, clientId, heatingStoneSpawn);
     }
 
 }

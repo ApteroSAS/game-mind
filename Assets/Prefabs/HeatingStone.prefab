@@ -593,8 +593,6 @@ MonoBehaviour:
   addAttributeOtherPlayerButton: {fileID: 8357486155249519815}
   leaveInteractionButton: {fileID: 7350221310751617123}
   yourAttributeText: {fileID: 3995426097423937806}
-  sliderValue:
-    m_InternalValue: 0
 --- !u!1 &3159416764781230570
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,12 +623,12 @@ Transform:
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 3617003292748212285}
   - {fileID: 8662328262688681075}
   - {fileID: 974814401346206361}
   - {fileID: 1634509025467608939}
   - {fileID: 1171715014799464102}
   - {fileID: 6942423528505297528}
-  - {fileID: 3617003292748212285}
   m_Father: {fileID: 8591810679528291915}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!225 &2792209125058026281

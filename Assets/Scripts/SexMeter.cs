@@ -1,10 +1,9 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
+public class SexMeter : Interactable
 {
     [SerializeField] private Slider slider;
     [SerializeField] private GameObject duringInteraction;
@@ -15,67 +14,20 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
     [SerializeField] private TextMeshProUGUI yourAttributeText;
 
     private GameObject player;
-    private bool isHolding = false;
-    private float holdTime = 0f;
-
-    public NetworkVariable<float> sexMeterValue = new NetworkVariable<float>();
+    private HoldButtonHandler addAttributeButtonHandler;
+    private HoldButtonHandler addAttributeOtherPlayerButtonHandler;
 
     private void Start()
     {
-        EventTrigger trigger = addAttributeButton.gameObject.AddComponent<EventTrigger>();
+        if (!IsOwner) gameObject.SetActive(false);
 
-        EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry
-        {
-            eventID = EventTriggerType.PointerDown
-        };
-        pointerDownEntry.callback.AddListener((data) => { OnPointerDown((PointerEventData)data); });
-        trigger.triggers.Add(pointerDownEntry);
-
-        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry
-        {
-            eventID = EventTriggerType.PointerUp
-        };
-        pointerUpEntry.callback.AddListener((data) => { OnPointerUp((PointerEventData)data); });
-        trigger.triggers.Add(pointerUpEntry);
+        addAttributeButtonHandler = SetupButton(addAttributeButton, true);
+        addAttributeOtherPlayerButtonHandler = SetupButton(addAttributeOtherPlayerButton, false);
 
         leaveInteractionButton.onClick.AddListener(LeaveInteraction);
     }
 
-    private void FixedUpdate()
-    {
-        if (isHolding)
-        {
-            holdTime += Time.fixedDeltaTime;
-        }
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
-        if (IsServer)
-        {
-            sexMeterValue.Value = slider.value;
-        }
-
-        if (!IsOwner)
-        {
-            slider.gameObject.SetActive(false);
-        }
-
-        sexMeterValue.OnValueChanged += OnSliderValueChanged;
-    }
-
-    override public void OnDestroy()
-    {
-        sexMeterValue.OnValueChanged -= OnSliderValueChanged;
-    }
-
-    private void OnSliderValueChanged(float oldValue, float newValue)
-    {
-        slider.value = newValue;
-    }
-
-    override public void Interact(GameObject playerObject)
+    public override void Interact(GameObject playerObject)
     {
         player = playerObject;
         player.GetComponent<PlayerNetwork>().SetMovementEnabled(false);
@@ -101,51 +53,61 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
         ToggleUI(false);
     }
 
-    private void AddAttribute(float value)
+    private HoldButtonHandler SetupButton(Button button, bool myMeter)
+    {
+        HoldButtonHandler handler = button.gameObject.AddComponent<HoldButtonHandler>();
+        handler.Initialize(this, myMeter); // Pass the SexMeter instance to HoldButtonHandler
+        return handler;
+    }
+
+    public void AddAttribute(float value, bool mySexMeter)
     {
         PlayerAttribute playerAttribute = player.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
 
         if (playerAttribute == PlayerAttribute.Ice)
-        {
-            Debug.Log("Reduce amount");
-            ChangeSliderValueServerRpc(-value);
-        }
-        else if (playerAttribute == PlayerAttribute.Fire)
-        {
-            Debug.Log("Increase amount");
-            ChangeSliderValueServerRpc(value);
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void ChangeSliderValueServerRpc(float changeAmount)
-    {
-        sexMeterValue.Value += changeAmount;
-        if(sexMeterValue.Value > 1) sexMeterValue.Value = 1;
-        else if(sexMeterValue.Value < 0) sexMeterValue.Value = 0;
+            value *= -1;
 
 
-    }
+        ulong clientId = GetPlayerId(mySexMeter);
+        PlayerAnswers targetPlayer = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
+        float currentSexMeter = targetPlayer.NetworkSexMeter.Value;
+        currentSexMeter = Mathf.Clamp(currentSexMeter + value, 0, 1);
+        targetPlayer.NetworkSexMeter.Value = currentSexMeter;
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        // Start tracking the hold time
-        isHolding = true;
-        holdTime = 0f;
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        // Stop tracking the hold time
-        isHolding = false;
-        Debug.Log("Button held for: " + holdTime + " seconds");
-        //Give it an odd and hard to understand number x)
-        float funnyNumber = Mathf.Pow(holdTime, 2) / 4;
-        AddAttribute(funnyNumber);
+        if (mySexMeter) slider.value = currentSexMeter;
     }
 
     private void SetAttribute()
     {
         yourAttributeText.text = "Your attribute: " + player.GetComponent<PlayerAnswers>().NetworkAttribute.Value.ToString();
+    }
+
+
+
+    private ulong GetPlayerId(bool IsOwner)
+    {
+        if (IsOwner)
+        {
+            foreach (var client in NetworkManager.Singleton.ConnectedClients)
+            {
+                if (client.Key == player.GetComponent<NetworkObject>().OwnerClientId)
+                {
+                    return client.Key;
+                }
+            }
+        }
+
+        else
+        {
+            foreach (var client in NetworkManager.Singleton.ConnectedClients)
+            {
+                if (client.Key != player.GetComponent<NetworkObject>().OwnerClientId)
+                {
+                    return client.Key;
+                }
+            }
+        }
+
+        return 0;
     }
 }

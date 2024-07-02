@@ -9,14 +9,12 @@ public enum PlayerAttribute
     Ice,
 }
 
-
-
 public class PlayerAnswers : NetworkBehaviour
 {
     private static PlayerAttribute hostAttribute;
 
     public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
-    public NetworkVariable<float> sexMeterValue = new NetworkVariable<float>();
+    public NetworkVariable<float> NetworkSexMeter = new NetworkVariable<float>(0.5f);
 
     public override void OnNetworkSpawn()
     {
@@ -25,10 +23,6 @@ public class PlayerAnswers : NetworkBehaviour
         if (IsServer)
         {
             AssignAttributeServerRpc();
-        }
-        else if (IsClient && IsOwner)
-        {
-            AssignAttributeClientRpc();
         }
     }
 
@@ -53,20 +47,10 @@ public class PlayerAnswers : NetworkBehaviour
         Debug.Log($"Player {OwnerClientId} assigned attribute: {NetworkAttribute.Value}");
     }
 
-    [ClientRpc]
-    public void AssignAttributeClientRpc()
+    [ServerRpc(RequireOwnership = false)]
+    public void ChangeSexMeterValueByClientIdServerRpc(ulong targetClientId, float newAmount)
     {
-        if (!IsOwner) return;
-
-        if (IsServer)
-        {
-            // Assign attribute directly on the server
-            AssignAttributeServerRpc();
-        }
-        else
-        {
-            // Request attribute assignment from the server
-            AssignAttributeServerRpc();
-        }
+        PlayerAnswers targetPlayer = NetworkManager.Singleton.ConnectedClients[targetClientId].PlayerObject.GetComponent<PlayerAnswers>();
+        targetPlayer.NetworkSexMeter.Value = newAmount;
     }
 }
