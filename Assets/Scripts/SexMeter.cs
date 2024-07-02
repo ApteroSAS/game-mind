@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,17 +12,16 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
     [SerializeField] private Button addAttributeButton;
     [SerializeField] private Button addAttributeOtherPlayerButton;
     [SerializeField] private Button leaveInteractionButton;
+    [SerializeField] private TextMeshProUGUI yourAttributeText;
+
     private GameObject player;
     private bool isHolding = false;
     private float holdTime = 0f;
 
-    public NetworkVariable<float> sliderValue = new NetworkVariable<float>();
-    public NetworkVariable<uint> myOwner = new NetworkVariable<uint>();
+    public NetworkVariable<float> sexMeterValue = new NetworkVariable<float>();
 
     private void Start()
     {
-        //addAttributeButton.onClick.AddListener(AddAttribute);
-
         EventTrigger trigger = addAttributeButton.gameObject.AddComponent<EventTrigger>();
 
         EventTrigger.Entry pointerDownEntry = new EventTrigger.Entry
@@ -54,7 +54,7 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
         base.OnNetworkSpawn();
         if (IsServer)
         {
-            sliderValue.Value = slider.value;
+            sexMeterValue.Value = slider.value;
         }
 
         if (!IsOwner)
@@ -62,12 +62,12 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
             slider.gameObject.SetActive(false);
         }
 
-        sliderValue.OnValueChanged += OnSliderValueChanged;
+        sexMeterValue.OnValueChanged += OnSliderValueChanged;
     }
 
     override public void OnDestroy()
     {
-        sliderValue.OnValueChanged -= OnSliderValueChanged;
+        sexMeterValue.OnValueChanged -= OnSliderValueChanged;
     }
 
     private void OnSliderValueChanged(float oldValue, float newValue)
@@ -85,6 +85,7 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
         player.transform.position = newPosition;
         player.transform.rotation = Quaternion.Euler(0, 0, 0);
 
+        SetAttribute();
         ToggleUI(true);
     }
 
@@ -119,9 +120,11 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
     [ServerRpc(RequireOwnership = false)]
     private void ChangeSliderValueServerRpc(float changeAmount)
     {
-        sliderValue.Value += changeAmount;
-        if(sliderValue.Value > 1) sliderValue.Value = 1;
-        else if(sliderValue.Value < 0) sliderValue.Value = 0;
+        sexMeterValue.Value += changeAmount;
+        if(sexMeterValue.Value > 1) sexMeterValue.Value = 1;
+        else if(sexMeterValue.Value < 0) sexMeterValue.Value = 0;
+
+
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -139,5 +142,10 @@ public class SexMeter : Interactable, IPointerDownHandler, IPointerUpHandler
         //Give it an odd and hard to understand number x)
         float funnyNumber = Mathf.Pow(holdTime, 2) / 4;
         AddAttribute(funnyNumber);
+    }
+
+    private void SetAttribute()
+    {
+        yourAttributeText.text = "Your attribute: " + player.GetComponent<PlayerAnswers>().NetworkAttribute.Value.ToString();
     }
 }

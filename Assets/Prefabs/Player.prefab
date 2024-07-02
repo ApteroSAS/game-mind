@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1076573231713727632}
   - component: {fileID: -6468409123540932527}
   - component: {fileID: 9003746923957395878}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -276,6 +276,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NetworkAttribute:
     m_InternalValue: 0
+  sexMeterValue:
+    m_InternalValue: 0
 --- !u!1 &1406778026404318502
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,7 +289,7 @@ GameObject:
   - component: {fileID: 8630755440663897528}
   - component: {fileID: 4916399420982289445}
   - component: {fileID: 7368661488754028672}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -374,7 +376,7 @@ GameObject:
   - component: {fileID: 2477020108399058070}
   - component: {fileID: 3085998808257727921}
   - component: {fileID: 8366886017587204153}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Face
   m_TagString: PlayerHead
   m_Icon: {fileID: 0}
@@ -462,7 +464,7 @@ GameObject:
   - component: {fileID: 961429242449402575}
   - component: {fileID: 3477337961030320664}
   - component: {fileID: 1990714686181775660}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: POV Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}

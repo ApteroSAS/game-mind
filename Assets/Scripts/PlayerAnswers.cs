@@ -16,6 +16,7 @@ public class PlayerAnswers : NetworkBehaviour
     private static PlayerAttribute hostAttribute;
 
     public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
+    public NetworkVariable<float> sexMeterValue = new NetworkVariable<float>();
 
     public override void OnNetworkSpawn()
     {
@@ -31,7 +32,7 @@ public class PlayerAnswers : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void AssignAttributeServerRpc()
     {
         if (!IsServer) return;

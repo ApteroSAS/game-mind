@@ -59,14 +59,6 @@ public class LobbyManager : MonoBehaviour
 
             // Start the server and set up Relay
             await StartHost();
-
-            //for (int i = 0; i < objectsToSpawn.Length; i++)
-            //{
-            //    GameObject instantiatedObject = Instantiate(objectsToSpawn[i]);
-            //    instantiatedObject.GetComponent<NetworkObject>().Spawn();
-            //    //instantiatedObject.transform.position = spawnPoints[i].position;
-            //}
-
         }
         catch (LobbyServiceException e)
         {

@@ -246,12 +246,6 @@ public class PlayerNetwork : NetworkBehaviour
         return grounded;
     }
 
-    [ServerRpc]
-    private void TestServerRpc()
-    {
-        Debug.Log("TestServerRpc " + OwnerClientId);
-    }
-
     public void SetMovementEnabled(bool active)
     {
         IsMovementEnabled = active;

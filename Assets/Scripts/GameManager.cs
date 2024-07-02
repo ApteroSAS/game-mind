@@ -5,9 +5,9 @@ public class GameManager : MonoBehaviour
 {
     public Camera mainCamera;
 
-    [SerializeField] Vector3[] playerSpawns;
+    [SerializeField] Vector3 playerSpawn;
     [SerializeField] GameObject heatingStonePrefab;
-    [SerializeField] Vector3[] heatingStoneSpawns;
+    [SerializeField] Vector3 heatingStoneSpawn;
 
     void Start()
     {
@@ -34,20 +34,15 @@ public class GameManager : MonoBehaviour
             var playerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
 
             // Spawn and move player
-            MoveObjectOnSpawnServerRpc(playerObject.transform, clientId, playerSpawns);
+            MoveObjectOnSpawnServerRpc(playerObject.transform, clientId, playerSpawn);
 
-            if (playerObject != null)
-            {
-                playerObject.GetComponent<PlayerAnswers>().AssignAttributeServerRpc();
-            }
+            //if (playerObject != null)
+            //    playerObject.GetComponent<PlayerAnswers>().AssignAttributeServerRpc();
 
-            // Spawn and move sex meter
+            // Spawn and move heatingStone
             var heatingStoneInstance = Instantiate(heatingStonePrefab);
             heatingStoneInstance.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-            MoveObjectOnSpawnServerRpc(heatingStoneInstance.transform, clientId, heatingStoneSpawns);
-
-            //heatingStonePrefabs[clientId].SetActive(true);
-            //heatingStonePrefabs[clientId].GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+            MoveObjectOnSpawnServerRpc(heatingStoneInstance.transform, clientId, heatingStoneSpawn);
         }
 
         if (NetworkManager.Singleton.LocalClientId == clientId)
@@ -57,18 +52,10 @@ public class GameManager : MonoBehaviour
     }
 
     [ServerRpc(RequireOwnership =false)]
-    private void MoveObjectOnSpawnServerRpc(Transform transform, ulong clientId, Vector3[] spawnPoints)
+    private void MoveObjectOnSpawnServerRpc(Transform transform, ulong clientId, Vector3 spawnPoint)
     {
-        if ((int)clientId < spawnPoints.Length)
-        {
-            Vector3 spawnPoint = spawnPoints[(int)clientId];
             MoveObjectOnServerRpc(transform, spawnPoint);
             Debug.Log($"Spawned object for client {clientId} at position {spawnPoint}");
-        }
-        else
-        {
-            Debug.LogError($"Spawn point not defined for client ID {clientId}");
-        }
     }
 
     [ServerRpc(RequireOwnership = false)]
