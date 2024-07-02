@@ -3,12 +3,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public enum PlayerAttribute
-{
-    Fire,
-    Ice,
-}
-
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 public class PlayerNetwork : NetworkBehaviour
@@ -27,13 +21,10 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private bool noobControls = true;
 
+    private bool IsMovementEnabled = true;
     private Transform head;
     private Transform povCamera;
     private float groundOffset;
-
-    // Network variable to sync attribute across network
-    public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
-
 
     public override void OnNetworkSpawn()
     {
@@ -93,14 +84,26 @@ public class PlayerNetwork : NetworkBehaviour
         Debug.Log("Controls disabled");
     }
 
+    private void Update()
+    {
+        if (!IsOwner) return;
+        if (!IsMovementEnabled) return;
+        if (noobControls)
+        {
+            RotateCharacterNoob(true);
+            MoveCharacterNoob();
+        }
+    }
+
     private void FixedUpdate()
     {
         if (!IsOwner) return;
+        if (!IsMovementEnabled) return;
 
         if (noobControls)
         {
-            RotateCharacterNoob();
-            MoveCharacterNoob();
+            RotateCharacterNoob(false);
+            InteractNoob();
         }
         else
         {
@@ -126,13 +129,13 @@ public class PlayerNetwork : NetworkBehaviour
     private void MoveCharacterNoob()
     {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            transform.position += Time.fixedDeltaTime * moveSpeed * transform.forward;
+            transform.position += Time.deltaTime * moveSpeed * transform.forward;
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            transform.position += Time.fixedDeltaTime * moveSpeed * -transform.forward;
+            transform.position += Time.deltaTime * moveSpeed * -transform.forward;
         if (Input.GetKey(KeyCode.A))
-            transform.position += Time.fixedDeltaTime * moveSpeed * -transform.right;
+            transform.position += Time.deltaTime * moveSpeed * -transform.right;
         if (Input.GetKey(KeyCode.D))
-            transform.position += Time.fixedDeltaTime * moveSpeed * transform.right;
+            transform.position += Time.deltaTime * moveSpeed * transform.right;
     }
 
     private void RotateCharacter()
@@ -151,17 +154,56 @@ public class PlayerNetwork : NetworkBehaviour
         head.localEulerAngles = new Vector3(xAxis, 0, 0);
     }
 
-    private void RotateCharacterNoob()
+    private void RotateCharacterNoob(bool isInUpdate)
     {
-        if (Input.GetKey(KeyCode.LeftArrow))
-            transform.Rotate(0, -rotateSpeed, 0); 
-        if (Input.GetKey(KeyCode.RightArrow))
-            transform.Rotate(0, rotateSpeed, 0);
+        if (isInUpdate)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+                transform.Rotate(0, -45, 0);
+            if (Input.GetKeyDown(KeyCode.E))
+                transform.Rotate(0, 45, 0);
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.LeftArrow))
+                transform.Rotate(0, -rotateSpeed, 0); 
+            if (Input.GetKey(KeyCode.RightArrow))
+                transform.Rotate(0, rotateSpeed, 0);
+        }
 
-        if (Input.GetKeyDown(KeyCode.Q))
-            transform.Rotate(0, -45, 0);
-        if (Input.GetKeyDown(KeyCode.E))
-            transform.Rotate(0, 45, 0);
+
+    }
+    
+    private void Interact()
+    {
+        float isClicked = interAction.ReadValue<float>();
+        if (isClicked == 0) return;
+
+        Physics.Raycast(povCamera.transform.position, transform.forward, out RaycastHit hit, 3f);
+        if (hit.transform == null) return;
+
+        Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
+        if (interactable == null) return;
+
+        interactable.Interact(gameObject);
+    }
+
+    private void InteractNoob()
+    {
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            Vector3 mouseScreenPosition = Input.mousePosition;
+            mouseScreenPosition.z = Camera.main.nearClipPlane;
+            Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+
+            Physics.Raycast(povCamera.transform.position, mouseWorldPosition - povCamera.transform.position, out RaycastHit hit, 5f);
+            if (hit.transform == null) return;
+
+            Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
+            if (interactable == null) return;
+
+            interactable.Interact(gameObject);
+        }
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -210,36 +252,9 @@ public class PlayerNetwork : NetworkBehaviour
         Debug.Log("TestServerRpc " + OwnerClientId);
     }
 
-    [ServerRpc (RequireOwnership =false)]
-    public void AssignAttributeServerRpc()
+    public void SetMovementEnabled(bool active)
     {
-        if (!IsServer) return;
-
-        var playerCount = NetworkManager.Singleton.ConnectedClients.Count;
-        if (playerCount % 2 == 0)
-        {
-            NetworkAttribute.Value = PlayerAttribute.Ice;
-        }
-        else
-        {
-            NetworkAttribute.Value = PlayerAttribute.Fire;
-        }
-
-        Debug.Log($"Player {OwnerClientId} assigned attribute: {NetworkAttribute.Value}");
-    }
-
-    private void Interact()
-    {
-        float isClicked = interAction.ReadValue<float>();
-        if (isClicked == 0) return;
-
-        Physics.Raycast(povCamera.transform.position, transform.forward, out RaycastHit hit, 3f);
-        if (hit.transform == null) return;
-
-        Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
-        if (interactable == null) return;
-
-        interactable.Interact(gameObject);
+        IsMovementEnabled = active;
     }
 
 }

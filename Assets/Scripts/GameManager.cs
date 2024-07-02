@@ -34,17 +34,17 @@ public class GameManager : MonoBehaviour
             var playerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
 
             // Spawn and move player
-            MoveObjectOnSpawn(playerObject.transform, clientId, playerSpawns);
+            MoveObjectOnSpawnServerRpc(playerObject.transform, clientId, playerSpawns);
 
             if (playerObject != null)
             {
-                playerObject.GetComponent<PlayerNetwork>().AssignAttributeServerRpc();
+                playerObject.GetComponent<PlayerAnswers>().AssignAttributeServerRpc();
             }
 
             // Spawn and move sex meter
             var heatingStoneInstance = Instantiate(heatingStonePrefab);
             heatingStoneInstance.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
-            MoveObjectOnSpawn(heatingStoneInstance.transform, clientId, heatingStoneSpawns);
+            MoveObjectOnSpawnServerRpc(heatingStoneInstance.transform, clientId, heatingStoneSpawns);
 
             //heatingStonePrefabs[clientId].SetActive(true);
             //heatingStonePrefabs[clientId].GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
@@ -56,7 +56,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void MoveObjectOnSpawn(Transform transform, ulong clientId, Vector3[] spawnPoints)
+    [ServerRpc(RequireOwnership =false)]
+    private void MoveObjectOnSpawnServerRpc(Transform transform, ulong clientId, Vector3[] spawnPoints)
     {
         if ((int)clientId < spawnPoints.Length)
         {
@@ -70,7 +71,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void MoveObjectOnServerRpc(Transform transform, Vector3 newPosition)
     {
         transform.position = newPosition;
