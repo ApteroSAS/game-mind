@@ -67,47 +67,63 @@ public class SexMeter : Interactable
         if (playerAttribute == PlayerAttribute.Ice)
             value *= -1;
 
+        RequestPlayerIdServerRpc(mySexMeter, value);
+    }
 
-        ulong clientId = GetPlayerId(mySexMeter);
-        PlayerAnswers targetPlayer = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
-        float currentSexMeter = targetPlayer.NetworkSexMeter.Value;
-        currentSexMeter = Mathf.Clamp(currentSexMeter + value, 0, 1);
-        targetPlayer.NetworkSexMeter.Value = currentSexMeter;
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPlayerIdServerRpc(bool isOwner, float value)
+    {
+        ulong clientId = GetPlayerIdOnServer(isOwner);
+        if (clientId != 0)
+        {
+            PlayerAnswers targetPlayer = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
+            float currentSexMeter = targetPlayer.NetworkSexMeter.Value;
+            currentSexMeter = Mathf.Clamp(currentSexMeter + value, 0, 1);
+            targetPlayer.NetworkSexMeter.Value = currentSexMeter;
 
-        if (mySexMeter) slider.value = currentSexMeter;
+            if (isOwner)
+            {
+                // If my sex meter, update the local slider as well
+                slider.value = currentSexMeter;
+            }
+        }
+        else
+        {
+            Debug.LogError("Client ID is 0, something went wrong.");
+        }
+    }
+
+    private ulong GetPlayerIdOnServer(bool isOwner)
+    {
+        if (player == null)
+        {
+            Debug.LogError("Player is not assigned.");
+            return 0;
+        }
+
+        ulong ownerId = player.GetComponent<NetworkObject>().OwnerClientId;
+        Debug.Log($"Owner Client ID: {ownerId}");
+
+        foreach (var client in NetworkManager.Singleton.ConnectedClients)
+        {
+            Debug.Log($"Connected Client Key: {client.Key}");
+            if ((isOwner && client.Key == ownerId) || (!isOwner && client.Key != ownerId))
+            {
+                return client.Key;
+            }
+        }
+
+        Debug.LogError("No matching client found.");
+        return 0;
     }
 
     private void SetAttribute()
     {
+        if (player == null)
+        {
+            Debug.LogError("Player is not assigned.");
+            return;
+        }
         yourAttributeText.text = "Your attribute: " + player.GetComponent<PlayerAnswers>().NetworkAttribute.Value.ToString();
-    }
-
-
-
-    private ulong GetPlayerId(bool IsOwner)
-    {
-        if (IsOwner)
-        {
-            foreach (var client in NetworkManager.Singleton.ConnectedClients)
-            {
-                if (client.Key == player.GetComponent<NetworkObject>().OwnerClientId)
-                {
-                    return client.Key;
-                }
-            }
-        }
-
-        else
-        {
-            foreach (var client in NetworkManager.Singleton.ConnectedClients)
-            {
-                if (client.Key != player.GetComponent<NetworkObject>().OwnerClientId)
-                {
-                    return client.Key;
-                }
-            }
-        }
-
-        return 0;
     }
 }
