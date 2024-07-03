@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour
 {
     public Camera mainCamera;
 
-    [SerializeField] Vector3 playerSpawn;
+    [SerializeField] Transform playerSpawn;
     [SerializeField] GameObject heatingStonePrefab;
     [SerializeField] Vector3 heatingStoneSpawn;
 
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
             var playerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
 
             // Spawn and move player
-            MoveObjectOnSpawnServerRpc(playerObject.transform, clientId, playerSpawn);
+            MoveObjectOnSpawnServerRpc(playerObject.transform, clientId, playerSpawn.position);
 
             //if (playerObject != null)
             //    playerObject.GetComponent<PlayerAnswers>().AssignAttributeServerRpc();
