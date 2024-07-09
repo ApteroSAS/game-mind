@@ -1,6 +1,7 @@
 using System;
 using Unity.Mathematics;
 using Unity.Netcode;
+using Unity.Properties;
 using UnityEngine;
 
 public enum PlayerAttribute
@@ -14,7 +15,9 @@ public class PlayerAnswers : NetworkBehaviour
     private static PlayerAttribute hostAttribute;
 
     public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
-    public NetworkVariable<float> NetworkSexMeter = new NetworkVariable<float>(0.5f);
+    public NetworkVariable<float> NetworkSexMeter = new NetworkVariable<float>();
+
+    private float timer = 0;
 
     public override void OnNetworkSpawn()
     {
@@ -23,6 +26,10 @@ public class PlayerAnswers : NetworkBehaviour
         if (IsServer)
         {
             AssignAttributeServerRpc();
+            NetworkSexMeter.Value = 0.5f;
+
+            var playerSpawn = FindFirstObjectByType<GameManager>().playerSpawn;
+            transform.position = playerSpawn.position;
         }
     }
 
@@ -52,5 +59,23 @@ public class PlayerAnswers : NetworkBehaviour
     {
         PlayerAnswers targetPlayer = NetworkManager.Singleton.ConnectedClients[targetClientId].PlayerObject.GetComponent<PlayerAnswers>();
         targetPlayer.NetworkSexMeter.Value = newAmount;
+    }
+
+    [ClientRpc]
+    private void TestClientRpc()
+    {
+        ulong clientId = NetworkManager.Singleton.LocalClientId;
+        Debug.Log("I am a clientRPC, my clientNumer is: " + clientId);
+    }
+
+    private void Update()
+    {
+        if (!IsOwner) return;
+        timer += Time.deltaTime;
+        if(timer > 5)
+        {
+            timer -= 5;
+            TestClientRpc();
+        }
     }
 }
