@@ -874,8 +874,7 @@ MonoBehaviour:
   mainCamera: {fileID: 496904005}
   playerSpawn: {fileID: 1010853253}
   question4Prefab: {fileID: 5469631913105629874, guid: cd7a2c404ef22a1429351572e088e142, type: 3}
-  wandPrefab: {fileID: 0}
-  question4Spawn: {fileID: 0}
+  wandPrefab: {fileID: 2339831808183004767, guid: 6eab162ae526ba84a8a312a3f36952c0, type: 3}
   NetworkGameState:
     m_InternalValue: 0
 --- !u!4 &256234087

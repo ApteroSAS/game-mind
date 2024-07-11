@@ -1,18 +1,40 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class Wand : MonoBehaviour
 {
-    [SerializeField] private Material fireMaterial;
     [SerializeField] private Material iceMaterial;
+    private bool isCasting;
+
+    private void Update()
+    {
+        if (isCasting) return;
+        ResetWand();
+    }
+
     public void SetWandColor(PlayerAttribute playerAttribute)
     {
-        if(playerAttribute == PlayerAttribute.Fire)
-        {
-            GetComponent<MeshRenderer>().material = fireMaterial;
-        }
-        else
+        if(playerAttribute == PlayerAttribute.Ice)
         {
             GetComponent<MeshRenderer>().material = iceMaterial;
         }
+    }
+
+    public void SetDestroy()
+    {
+        Destroy(gameObject);
+    }
+
+    public void AnimateWand(float currentValue)
+    {
+        isCasting = true;
+        transform.eulerAngles = new Vector3(currentValue, 0, 0);
+    }
+
+    public void ResetWand()
+    {
+        isCasting = false;
+        float currentXAxis = transform.eulerAngles.x;
+        transform.eulerAngles = Vector3.zero;
     }
 }

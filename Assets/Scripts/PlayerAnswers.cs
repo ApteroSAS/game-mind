@@ -26,7 +26,8 @@ public class PlayerAnswers : NetworkBehaviour
         if (IsServer)
         {
             AssignAttributeServerRpc();
-            NetworkSexMeter.Value = 0.5f;
+            float randomFloat = UnityEngine.Random.Range(0f, 1f);
+            NetworkSexMeter.Value = randomFloat;
 
             var playerSpawn = FindFirstObjectByType<GameManager>().playerSpawn;
             transform.position = playerSpawn.position;

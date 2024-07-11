@@ -9,12 +9,13 @@ public class Q4_Portal : Interactable
     [SerializeField] Button interact;
     [SerializeField] Slider slider;
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
         AdjustPortalTexture();
-
         interact.onClick.AddListener(OnButtonClick);
     }
+
 
     public override void Interact(GameObject gameObject)
     {
@@ -56,6 +57,8 @@ public class Q4_Portal : Interactable
             meshRenderer.materials = materials;
         }
     }
+
+
 
     private void UpdateSlider(float newValue, ulong clientId)
     {

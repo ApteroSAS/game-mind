@@ -21,10 +21,10 @@ public class GameManager : NetworkBehaviour
     [SerializeField] public Transform playerSpawn;
     [SerializeField] GameObject question4Prefab;
     [SerializeField] GameObject wandPrefab;
-    [SerializeField] Transform question4Spawn;
 
-    private List<GameObject> listOfSpawnedObjects = new List<GameObject>();
-
+    public List<GameObject> listOfSpawnedObjects = new List<GameObject>();
+    public delegate void DestroyLocalObject();
+    public DestroyLocalObject destroyLocalObject;
 
     public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>(GameState.Tutorial);
 
@@ -39,6 +39,7 @@ public class GameManager : NetworkBehaviour
     void Start()
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
         {
             NetworkGameState.Value = GameState.Question1;
@@ -49,32 +50,48 @@ public class GameManager : NetworkBehaviour
     {
         base.OnDestroy();
         NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
     }
 
     private void OnClientConnected(ulong clientId)
     {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            //SpawnCauldron(clientId);
-        }
-
         if (NetworkManager.Singleton.LocalClientId == clientId)
         {
             mainCamera.gameObject.SetActive(false);
         }
     }
 
+    private void OnClientDisconnected(ulong clientId)
+    {
+        if (NetworkManager.Singleton.LocalClientId == clientId)
+        {
+            mainCamera.gameObject.SetActive(true);
+        }
+    }
+
     private void SpawnQuestion4()
     {
-            var question4Instance = Instantiate(question4Prefab);
-            listOfSpawnedObjects.Add(question4Instance);
-            question4Instance.GetComponent<NetworkObject>().Spawn();
+        var question4Instance = Instantiate(question4Prefab);
+        listOfSpawnedObjects.Add(question4Instance);
+        question4Instance.GetComponent<NetworkObject>().Spawn();
+        InstantiateWandsClientRpc();
+    }
 
-            //foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
-            //{
-            //    PlayerAttribute attribute = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
-            //    var wandInstance = Instantiate()
-            //}
+    [ClientRpc]
+    private void InstantiateWandsClientRpc()
+    {
+        GameObject playerObject = NetworkManager.LocalClient.PlayerObject.gameObject;
+        PlayerAttribute attribute = playerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
+        Debug.Log("This player has attribute: " + attribute);
+        var question4wand = Instantiate(wandPrefab, playerObject.transform);
+        question4wand.GetComponent<Wand>().SetWandColor(attribute);
+        destroyLocalObject += question4wand.GetComponent<Wand>().SetDestroy;
+    }
+
+    [ClientRpc]
+    private void DestroyPropsClientRpc()
+    {
+        destroyLocalObject.Invoke();
     }
 
 
@@ -96,6 +113,11 @@ public class GameManager : NetworkBehaviour
         }
 
         listOfSpawnedObjects.Clear();
+        if (destroyLocalObject != null)
+        {
+            DestroyPropsClientRpc();
+            destroyLocalObject = null;
+        }
 
         switch (NetworkGameState.Value)
         {

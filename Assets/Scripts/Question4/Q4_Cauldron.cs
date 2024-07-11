@@ -13,10 +13,11 @@ public class Q4_Cauldron : Interactable
 
     //make particlesystem go crazy depending on heat!
 
-    private void Awake()
+    public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
         AdjustCauldronTexture();
-
+        UpdateSliderToClient();
         interact.onClick.AddListener(OnButtonClick);
     }
 
@@ -55,6 +56,11 @@ public class Q4_Cauldron : Interactable
             meshRenderer.materials = materials;
             Debug.Log("changed texture");
         }
+    }
+
+    private void UpdateSliderToClient()
+    {
+        slider.value = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>().NetworkSexMeter.Value;
     }
 
     private void UpdateSlider(float newValue,ulong clientId)
