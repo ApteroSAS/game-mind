@@ -65,7 +65,13 @@ public class PlayerAnswers : NetworkBehaviour
     private void TestClientRpc()
     {
         ulong clientId = NetworkManager.Singleton.LocalClientId;
-        Debug.Log("I am a clientRPC, my clientNumer is: " + clientId);
+        //Debug.Log("I got triggered by client: " + clientId);
+    }
+
+    [ServerRpc (RequireOwnership = false)]
+    private void TestServerRpc()
+    {
+        TestClientRpc();
     }
 
     private void Update()
@@ -75,7 +81,7 @@ public class PlayerAnswers : NetworkBehaviour
         if(timer > 5)
         {
             timer -= 5;
-            TestClientRpc();
+            TestServerRpc();
         }
     }
 }

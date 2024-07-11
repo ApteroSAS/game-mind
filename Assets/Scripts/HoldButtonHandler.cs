@@ -3,14 +3,14 @@ using UnityEngine.EventSystems;
 
 public class HoldButtonHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    private SexMeter sexMeter; // Reference to the SexMeter script
+    private Cauldron cauldron; // Reference to the SexMeter script
     private bool isHolding = false;
     private float holdTime = 0f;
     private bool isMySexMeter;
 
-    public void Initialize(SexMeter meter, bool mySexMeter)
+    public void Initialize(Cauldron meter, bool mySexMeter)
     {
-        sexMeter = meter; // Assign the SexMeter reference
+        cauldron = meter; // Assign the SexMeter reference
         isMySexMeter = mySexMeter;
     }
 
@@ -25,10 +25,10 @@ public class HoldButtonHandler : MonoBehaviour, IPointerDownHandler, IPointerUpH
         isHolding = false;
 
         // Check if sexMeter is not null before using it
-        if (sexMeter != null)
+        if (cauldron != null)
         {
             float funnyNumber = Mathf.Pow(holdTime, 2) / 4;
-            sexMeter.AddAttribute(funnyNumber, isMySexMeter);
+            cauldron.AddAttribute(funnyNumber, isMySexMeter);
         }
         else
         {

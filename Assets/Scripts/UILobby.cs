@@ -19,7 +19,7 @@ public class UILobby : MonoBehaviour
     {
         if (currentLobbyType.GetLobbyType() == TypeOfLobbyWindow.LOBBYMENU) return;
 
-        if (Input.anyKeyDown)
+        if (Input.anyKeyDown && !Input.GetMouseButton(0))
         {
             TurnCanvasGroup(currentLobbyType, false);
         }

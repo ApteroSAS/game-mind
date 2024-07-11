@@ -18,12 +18,10 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private TMP_InputField lobbyNameInputField;
     [SerializeField] private Button createLobbyButton;
     [SerializeField] private Button joinLobbyButton;
+    [SerializeField] private Button leaveLobbyButton;
     [SerializeField] private TMP_InputField joinLobbyInputField;
     [SerializeField] private TMP_Text lobbyCode;
     [SerializeField] private UILobby uiLobby;
-
-    [SerializeField] private GameObject[] objectsToSpawn;
-    [SerializeField] private Transform[] spawnPoints;
 
     private Lobby currentLobby;
 
@@ -35,6 +33,7 @@ public class LobbyManager : MonoBehaviour
 
         createLobbyButton.onClick.AddListener(CreateLobby);
         joinLobbyButton.onClick.AddListener(JoinLobby);
+        leaveLobbyButton.onClick.AddListener(LeaveLobby);
     }
 
     private async void CreateLobby()
@@ -119,5 +118,36 @@ public class LobbyManager : MonoBehaviour
         NetworkManager.Singleton.StartClient();
         lobbyCode.text = currentLobby.LobbyCode.ToString();
         uiLobby.SetCurrentLobby(TypeOfLobbyWindow.INLOBBYMENU);
+    }
+
+    private async void LeaveLobby()
+    {
+        try
+        {
+            if (currentLobby != null)
+            {
+                await LobbyService.Instance.RemovePlayerAsync(currentLobby.Id, AuthenticationService.Instance.PlayerId);
+                Debug.Log("Left the lobby: " + currentLobby.Id);
+                currentLobby = null;
+
+                // Check if we are the host or client and stop the network accordingly
+                if (NetworkManager.Singleton.IsHost)
+                {
+                    NetworkManager.Singleton.Shutdown();
+                }
+                else if (NetworkManager.Singleton.IsClient)
+                {
+                    NetworkManager.Singleton.Shutdown();
+                }
+
+                // Reset UI and other necessary variables
+                lobbyCode.text = "";
+                uiLobby.SetCurrentLobby(TypeOfLobbyWindow.LOBBYMENU);
+            }
+        }
+        catch (LobbyServiceException e)
+        {
+            Debug.LogError(e);
+        }
     }
 }

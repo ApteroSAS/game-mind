@@ -103,7 +103,7 @@ public class PlayerNetwork : NetworkBehaviour
         if (noobControls)
         {
             RotateCharacterNoob(false);
-            InteractNoob();
+            //InteractNoob();
         }
         else
         {

@@ -3,9 +3,19 @@ guid: fdc73475cbcd1324997064c9bd655818
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: shiny-blue
+    second: {fileID: 2100000, guid: 2e9c3f4034ff57141994fc91eb7cbb4f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood-dark
+    second: {fileID: 2100000, guid: 91f9b58add4537d4d9063d7cea862725, type: 2}
   materials:
-    materialImportMode: 0
+    materialImportMode: 2
     materialName: 0
     materialSearch: 1
     materialLocation: 1

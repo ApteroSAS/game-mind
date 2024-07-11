@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Runtime.CompilerServices;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 public enum GameState
 {
@@ -18,7 +20,11 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] public Transform playerSpawn;
     [SerializeField] GameObject question4Prefab;
+    [SerializeField] GameObject wandPrefab;
     [SerializeField] Transform question4Spawn;
+
+    private List<GameObject> listOfSpawnedObjects = new List<GameObject>();
+
 
     public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>(GameState.Tutorial);
 
@@ -39,8 +45,9 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    void OnDestroy()
+    public override void OnDestroy()
     {
+        base.OnDestroy();
         NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
     }
 
@@ -59,11 +66,15 @@ public class GameManager : NetworkBehaviour
 
     private void SpawnQuestion4()
     {
-        foreach (var item in NetworkManager.Singleton.ConnectedClientsIds)
-        {
-            var question4Instance = Instantiate(question4Prefab, question4Spawn.position, Quaternion.identity);
-            question4Instance.GetComponent<NetworkObject>().SpawnWithOwnership(item);
-        }
+            var question4Instance = Instantiate(question4Prefab);
+            listOfSpawnedObjects.Add(question4Instance);
+            question4Instance.GetComponent<NetworkObject>().Spawn();
+
+            //foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+            //{
+            //    PlayerAttribute attribute = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
+            //    var wandInstance = Instantiate()
+            //}
     }
 
 
@@ -78,6 +89,13 @@ public class GameManager : NetworkBehaviour
 
         if (previousGameState == NetworkGameState.Value)
             return;
+
+        for (int i = 0; i < listOfSpawnedObjects.Count; i++)
+        {
+            listOfSpawnedObjects[i].GetComponent<NetworkObject>().Despawn();
+        }
+
+        listOfSpawnedObjects.Clear();
 
         switch (NetworkGameState.Value)
         {
