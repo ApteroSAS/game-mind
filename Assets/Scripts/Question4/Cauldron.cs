@@ -23,9 +23,8 @@ public class Cauldron : Interactable
         leaveInteractionButton.onClick.AddListener(LeaveInteraction);
     }
 
-    public override void Interact(GameObject playerObject)
+    public override void Interact()
     {
-        player = playerObject;
         player.GetComponent<PlayerNetwork>().SetMovementEnabled(false);
         Vector3 newPosition = transform.position;
         newPosition.z -= 4;
@@ -115,5 +114,11 @@ public class Cauldron : Interactable
             return;
         }
         yourAttributeText.text = "Your attribute: " + player.GetComponent<PlayerAnswers>().NetworkAttribute.Value.ToString();
+    }
+
+
+    public override void StopInteract()
+    {
+        throw new System.NotImplementedException();
     }
 }

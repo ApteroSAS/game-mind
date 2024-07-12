@@ -4,55 +4,65 @@ using UnityEngine.UI;
 
 public class Q4_Cauldron : Interactable
 {
-    [SerializeField] Material cauldronTextureGuest;
+    [SerializeField] private Material textureGuest;
+    [SerializeField] private Slider slider;
 
-    [SerializeField] Button interact;
-    [SerializeField] Slider slider;
+    private bool isHolding = false;
+    private float holdTime = 0;
 
-
-
-    //make particlesystem go crazy depending on heat!
+    private void Update()
+    {
+        if (isHolding)
+        {
+            holdTime += Time.deltaTime;
+            float valueChange = holdTime * 100;
+            NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Wand>().AnimateWand(valueChange);
+        }
+    }
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        AdjustCauldronTexture();
+        AdjustTexture();
         UpdateSliderToClient();
-        interact.onClick.AddListener(OnButtonClick);
     }
 
-    public override void Interact(GameObject gameObject)
+    public override void Interact()
     {
-        //animation on wand and track duration ig?
+        isHolding = true;
     }
 
-    private void OnButtonClick()
+    public override void StopInteract()
     {
-        TestMethodInteractServerRpc();
+        isHolding = false;
+        NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Wand>().ResetWand();
+        ApplyAttributeServerRpc(holdTime);
+        holdTime = 0;
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void TestMethodInteractServerRpc(ServerRpcParams serverRpcParams = default)
+    protected virtual void ApplyAttributeServerRpc(float valueChange, ServerRpcParams serverRpcParams = default)
     {
         var clientId = serverRpcParams.Receive.SenderClientId;
-        Debug.Log(clientId + " triggered this method");
+        float newValue = valueChange.FunnyNumber();
+
         PlayerAttribute attribute = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
-        float value = 0.1f;
-        if (attribute == PlayerAttribute.Ice) value *= -1;
+        if (attribute == PlayerAttribute.Ice) newValue *= -1;
 
         float currentValue = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>().NetworkSexMeter.Value;
-        float newValue = Mathf.Clamp(currentValue + value, 0, 1);
+        newValue = Mathf.Clamp(currentValue + newValue, 0, 1);
         NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>().NetworkSexMeter.Value = newValue;
+        
         UpdateSlider(newValue, clientId);
     }
 
-    private void AdjustCauldronTexture()
+    private void AdjustTexture()
     {
         if (NetworkManager.Singleton.LocalClientId != OwnerClientId)
         {
             MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
             Material[] materials = meshRenderer.materials;
-            materials[1] = cauldronTextureGuest;
+            materials[1] = textureGuest;
             meshRenderer.materials = materials;
             Debug.Log("changed texture");
         }
@@ -63,7 +73,7 @@ public class Q4_Cauldron : Interactable
         slider.value = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>().NetworkSexMeter.Value;
     }
 
-    private void UpdateSlider(float newValue,ulong clientId)
+    protected void UpdateSlider(float newValue,ulong clientId)
     {
         //if (!IsServer) return;
         // NOTE! In case you know a list of ClientId's ahead of time, that does not need change,

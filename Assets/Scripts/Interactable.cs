@@ -3,5 +3,7 @@ using UnityEngine;
 
 public abstract class Interactable : NetworkBehaviour
 {
-    public abstract void Interact(GameObject gameObject);
+    public abstract void Interact();
+
+    public abstract void StopInteract();
 }

@@ -27,6 +27,7 @@ public class Wand : MonoBehaviour
     public void AnimateWand(float currentValue)
     {
         isCasting = true;
+        if (currentValue > 90) currentValue = 90;
         transform.eulerAngles = new Vector3(currentValue, 0, 0);
     }
 

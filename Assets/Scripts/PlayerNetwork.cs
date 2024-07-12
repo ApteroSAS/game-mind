@@ -25,6 +25,7 @@ public class PlayerNetwork : NetworkBehaviour
     private Transform head;
     private Transform povCamera;
     private float groundOffset;
+    private GameObject currentHitObject;
 
     public override void OnNetworkSpawn()
     {
@@ -92,6 +93,7 @@ public class PlayerNetwork : NetworkBehaviour
         {
             RotateCharacterNoob(true);
             MoveCharacterNoob();
+            InteractNoob();
         }
     }
 
@@ -103,7 +105,6 @@ public class PlayerNetwork : NetworkBehaviour
         if (noobControls)
         {
             RotateCharacterNoob(false);
-            //InteractNoob();
         }
         else
         {
@@ -185,24 +186,30 @@ public class PlayerNetwork : NetworkBehaviour
         Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
         if (interactable == null) return;
 
-        interactable.Interact(gameObject);
+        interactable.Interact();
     }
 
     private void InteractNoob()
     {
-        if (Input.GetKey(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             Vector3 mouseScreenPosition = Input.mousePosition;
             mouseScreenPosition.z = Camera.main.nearClipPlane;
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
 
             Physics.Raycast(povCamera.transform.position, mouseWorldPosition - povCamera.transform.position, out RaycastHit hit, 5f);
+
             if (hit.transform == null) return;
-
-            Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
-            if (interactable == null) return;
-
-            interactable.Interact(gameObject);
+            currentHitObject = hit.transform.gameObject;
+            Interactable interactable = currentHitObject.GetComponent<Interactable>();
+            if (interactable != null) interactable.Interact();
+        }
+        if(Input.GetKeyUp(KeyCode.Mouse0))
+        {
+            if (currentHitObject == null) return;
+            Interactable interactable = currentHitObject.GetComponent<Interactable>(); 
+            if (interactable != null) interactable.StopInteract();
+            currentHitObject = null;
         }
     }
 
