@@ -16,7 +16,7 @@ public class Q4_Cauldron : Interactable
         {
             holdTime += Time.deltaTime;
             float valueChange = holdTime * 100;
-            NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Wand>().AnimateWand(valueChange);
+            NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Q4_Wand>().AnimateWand(valueChange);
         }
     }
 
@@ -35,7 +35,7 @@ public class Q4_Cauldron : Interactable
     public override void StopInteract()
     {
         isHolding = false;
-        NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Wand>().ResetWand();
+        NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Q4_Wand>().ResetWand();
         ApplyAttributeServerRpc(holdTime);
         holdTime = 0;
     }

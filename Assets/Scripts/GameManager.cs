@@ -1,7 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using System.Runtime.CompilerServices;
-using NUnit.Framework;
 using System.Collections.Generic;
 
 public enum GameState
@@ -19,8 +17,14 @@ public class GameManager : NetworkBehaviour
     public Camera mainCamera;
 
     [SerializeField] public Transform playerSpawn;
-    [SerializeField] GameObject question4Prefab;
-    [SerializeField] GameObject wandPrefab;
+
+    //Question3
+    [SerializeField] private GameObject question3Prefab;
+                      
+    //Question4       
+    [SerializeField] private GameObject question4Prefab;
+    [SerializeField] private GameObject wandPrefab;
+
 
     public List<GameObject> listOfSpawnedObjects = new List<GameObject>();
     public delegate void DestroyLocalObject();
@@ -69,6 +73,21 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    private void SpawnQuestion3()
+    {
+        var question3Instance = Instantiate(question3Prefab);
+        listOfSpawnedObjects.Add(question3Instance);
+        question3Instance.GetComponent<NetworkObject>().Spawn();
+    }
+
+    [ClientRpc]
+    private void InstantiateCubesClientRpc()
+    {
+        GameObject playerObject = NetworkManager.LocalClient.PlayerObject.gameObject;
+        PlayerAttribute attribute = playerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
+        var question4wand = Instantiate(wandPrefab, playerObject.transform);
+    }
+
     private void SpawnQuestion4()
     {
         var question4Instance = Instantiate(question4Prefab);
@@ -82,10 +101,9 @@ public class GameManager : NetworkBehaviour
     {
         GameObject playerObject = NetworkManager.LocalClient.PlayerObject.gameObject;
         PlayerAttribute attribute = playerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
-        Debug.Log("This player has attribute: " + attribute);
         var question4wand = Instantiate(wandPrefab, playerObject.transform);
-        question4wand.GetComponent<Wand>().SetWandColor(attribute);
-        destroyLocalObject += question4wand.GetComponent<Wand>().SetDestroy;
+        question4wand.GetComponent<Q4_Wand>().SetWandColor(attribute);
+        destroyLocalObject += question4wand.GetComponent<Q4_Wand>().SetDestroy;
     }
 
     [ClientRpc]
@@ -131,6 +149,7 @@ public class GameManager : NetworkBehaviour
                 break;
 
             case GameState.Question3:
+                SpawnQuestion3();
                 break;
 
             case GameState.Question4:

@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class Wand : MonoBehaviour
+public class Q4_Wand : MonoBehaviour
 {
     [SerializeField] private Material iceMaterial;
     private bool isCasting;
+
 
     private void Update()
     {

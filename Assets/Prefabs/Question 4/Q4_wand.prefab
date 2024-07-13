@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3289185834513562623}
   - component: {fileID: 1474595567687421596}
   - component: {fileID: 2752577161618013154}
-  - component: {fileID: 2146744581909693145}
+  - component: {fileID: 8363035732975924113}
   m_Layer: 0
   m_Name: Q4_wand
   m_TagString: Untagged
@@ -88,7 +88,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2146744581909693145
+--- !u!114 &8363035732975924113
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -100,5 +100,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 038276224bbf0f1459cd8f109dbbf03f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireMaterial: {fileID: 2100000, guid: e8e64663d4eca67478e0ecc4b307af17, type: 2}
   iceMaterial: {fileID: 2100000, guid: 2e9c3f4034ff57141994fc91eb7cbb4f, type: 2}
