@@ -20,7 +20,8 @@ public class GameManager : NetworkBehaviour
 
     //Question3
     [SerializeField] private GameObject question3Prefab;
-                      
+    [SerializeField] private GameObject blockPrefab;
+
     //Question4       
     [SerializeField] private GameObject question4Prefab;
     [SerializeField] private GameObject wandPrefab;
@@ -34,10 +35,10 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
-        if (IsServer)
-        {
-            SetGameStateServerRpc();
-        }
+        if (Input.GetKeyDown(KeyCode.Alpha1)) if (IsServer) SetGameStateServerRpc(GameState.Question1);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) if (IsServer) SetGameStateServerRpc(GameState.Question2);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) if (IsServer) SetGameStateServerRpc(GameState.Question3);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) if (IsServer) SetGameStateServerRpc(GameState.Question4);
     }
 
     void Start()
@@ -78,14 +79,35 @@ public class GameManager : NetworkBehaviour
         var question3Instance = Instantiate(question3Prefab);
         listOfSpawnedObjects.Add(question3Instance);
         question3Instance.GetComponent<NetworkObject>().Spawn();
+        bool[] randomBools = new bool[6];
+        int countTrue = 0;
+        int countFalse = 0;
+        for (int i = 0; i < randomBools.Length; i++)
+        {
+            randomBools[i] = Utils.GetRandomBool();
+            if (countTrue >= 3) randomBools[i] = false;
+            if (countFalse >= 3) randomBools[i] = true;
+
+            if (randomBools[i] == true) 
+                countTrue++;
+            else 
+                countFalse++;
+        }
+        InstantiateBoxesClientRpc(randomBools);
     }
 
     [ClientRpc]
-    private void InstantiateCubesClientRpc()
+    private void InstantiateBoxesClientRpc(bool[] randomBools)
     {
-        GameObject playerObject = NetworkManager.LocalClient.PlayerObject.gameObject;
-        PlayerAttribute attribute = playerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
-        var question4wand = Instantiate(wandPrefab, playerObject.transform);
+        for (int i = 0; i < 6; i++)
+        {
+            var question3box = Instantiate(blockPrefab);
+            Vector3 question3Pos = question3box.transform.position;
+            question3Pos.y += 1 + (0.5f * i);
+            question3box.transform.position = question3Pos;
+            question3box.GetComponent<Q3_Block>().OnInstantiate(i, randomBools[i]);
+            destroyLocalObject += question3box.GetComponent<Q3_Block>().SetDestroy;
+        }
     }
 
     private void SpawnQuestion4()
@@ -114,19 +136,16 @@ public class GameManager : NetworkBehaviour
 
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetGameStateServerRpc()
+    private void SetGameStateServerRpc(GameState newGameState)
     {
         GameState previousGameState = NetworkGameState.Value;
-        if (Input.GetKeyDown(KeyCode.Alpha1)) NetworkGameState.Value = GameState.Question1;
-        if (Input.GetKeyDown(KeyCode.Alpha2)) NetworkGameState.Value = GameState.Question2;
-        if (Input.GetKeyDown(KeyCode.Alpha3)) NetworkGameState.Value = GameState.Question3;
-        if (Input.GetKeyDown(KeyCode.Alpha4)) NetworkGameState.Value = GameState.Question4;
-
-        if (previousGameState == NetworkGameState.Value)
+        NetworkGameState.Value = newGameState;
+        if (previousGameState == newGameState)
             return;
 
         for (int i = 0; i < listOfSpawnedObjects.Count; i++)
         {
+            if(listOfSpawnedObjects[i] != null)
             listOfSpawnedObjects[i].GetComponent<NetworkObject>().Despawn();
         }
 
@@ -137,7 +156,7 @@ public class GameManager : NetworkBehaviour
             destroyLocalObject = null;
         }
 
-        switch (NetworkGameState.Value)
+        switch (newGameState)
         {
             case GameState.Tutorial:
                 break;

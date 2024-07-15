@@ -873,7 +873,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 496904005}
   playerSpawn: {fileID: 1010853253}
-  question3Prefab: {fileID: 0}
+  question3Prefab: {fileID: 7709998548232873776, guid: dc1d5fd95a5572d439fc5235092c3147, type: 3}
+  blockPrefab: {fileID: 8643374920404057242, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
   question4Prefab: {fileID: 5469631913105629874, guid: cd7a2c404ef22a1429351572e088e142, type: 3}
   wandPrefab: {fileID: 2339831808183004767, guid: 6eab162ae526ba84a8a312a3f36952c0, type: 3}
   listOfSpawnedObjects: []
@@ -4893,63 +4894,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3677836436604523720, guid: 7b30520317300ca448288c5df1714206, type: 3}
---- !u!1001 &1751343001519326770
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7474619854369257844, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8643374920404057242, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
-      propertyPath: m_Name
-      value: Q3_Cube
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -4967,4 +4911,3 @@ SceneRoots:
   - {fileID: 1171942186}
   - {fileID: 1928841151}
   - {fileID: 1010853253}
-  - {fileID: 1751343001519326770}
