@@ -28,8 +28,7 @@ public class GameManager : NetworkBehaviour
 
 
     public List<GameObject> listOfSpawnedObjects = new List<GameObject>();
-    public delegate void DestroyLocalObject();
-    public DestroyLocalObject destroyLocalObject;
+    private List<GameObject> spawnedInstances = new();
 
     public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>(GameState.Tutorial);
 
@@ -45,10 +44,6 @@ public class GameManager : NetworkBehaviour
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
-        {
-            NetworkGameState.Value = GameState.Question1;
-        }
     }
 
     public override void OnDestroy()
@@ -77,8 +72,7 @@ public class GameManager : NetworkBehaviour
     private void SpawnQuestion3()
     {
         var question3Instance = Instantiate(question3Prefab);
-        listOfSpawnedObjects.Add(question3Instance);
-        question3Instance.GetComponent<NetworkObject>().Spawn();
+        spawnedInstances.Add(question3Instance);
         bool[] randomBools = new bool[6];
         int countTrue = 0;
         int countFalse = 0;
@@ -102,19 +96,18 @@ public class GameManager : NetworkBehaviour
         for (int i = 0; i < 6; i++)
         {
             var question3box = Instantiate(blockPrefab);
+            spawnedInstances.Add(question3box);
             Vector3 question3Pos = question3box.transform.position;
             question3Pos.y += 1 + (0.5f * i);
             question3box.transform.position = question3Pos;
             question3box.GetComponent<Q3_Block>().OnInstantiate(i, randomBools[i]);
-            destroyLocalObject += question3box.GetComponent<Q3_Block>().SetDestroy;
         }
     }
 
     private void SpawnQuestion4()
     {
         var question4Instance = Instantiate(question4Prefab);
-        listOfSpawnedObjects.Add(question4Instance);
-        question4Instance.GetComponent<NetworkObject>().Spawn();
+        spawnedInstances.Add(question4Instance);
         InstantiateWandsClientRpc();
     }
 
@@ -124,14 +117,8 @@ public class GameManager : NetworkBehaviour
         GameObject playerObject = NetworkManager.LocalClient.PlayerObject.gameObject;
         PlayerAttribute attribute = playerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
         var question4wand = Instantiate(wandPrefab, playerObject.transform);
+        spawnedInstances.Add(question4wand);
         question4wand.GetComponent<Q4_Wand>().SetWandColor(attribute);
-        destroyLocalObject += question4wand.GetComponent<Q4_Wand>().SetDestroy;
-    }
-
-    [ClientRpc]
-    private void DestroyPropsClientRpc()
-    {
-        destroyLocalObject.Invoke();
     }
 
 
@@ -143,18 +130,14 @@ public class GameManager : NetworkBehaviour
         if (previousGameState == newGameState)
             return;
 
-        for (int i = 0; i < listOfSpawnedObjects.Count; i++)
+        foreach (var instance in spawnedInstances)
         {
-            if(listOfSpawnedObjects[i] != null)
-            listOfSpawnedObjects[i].GetComponent<NetworkObject>().Despawn();
+            if(instance != null)
+            {
+                Destroy(instance);
+            }
         }
-
-        listOfSpawnedObjects.Clear();
-        if (destroyLocalObject != null)
-        {
-            DestroyPropsClientRpc();
-            destroyLocalObject = null;
-        }
+        spawnedInstances.Clear();
 
         switch (newGameState)
         {
@@ -180,6 +163,15 @@ public class GameManager : NetworkBehaviour
 
             default:
                 break;
+        }
+
+        foreach (var instance in spawnedInstances)
+        {
+            if (instance != null)
+            {
+                NetworkObject networkObject = instance.GetComponent<NetworkObject>();
+                if (networkObject != null) networkObject.Spawn();
+            }
         }
     }
 
