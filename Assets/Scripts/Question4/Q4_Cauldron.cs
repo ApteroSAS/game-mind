@@ -64,7 +64,6 @@ public class Q4_Cauldron : Interactable
             Material[] materials = meshRenderer.materials;
             materials[1] = textureGuest;
             meshRenderer.materials = materials;
-            Debug.Log("changed texture");
         }
     }
 

@@ -15,30 +15,35 @@ public enum Symbol
 public class Q3_Block : Interactable
 {
     [SerializeField] GameObject[] childSymbols;
+    [SerializeField] Material[] materials;
     [SerializeField] string[] questionText;
+    [SerializeField] MeshRenderer[] meshRendererToChange;
+    private Symbol currentSymbol;
     private bool isHolding = false;
-    private float _posX;
+    private Vector3 _pos;
     private readonly float margin = 2;
 
 
     public void OnInstantiate(int index, bool showText)
     {
-        _posX = transform.position.x;
+        _pos = GetComponent<TeleportOnSpawn>().GetSpawn().position;
         RandomizeSpawn();
 
         ShowText(index, showText);
         
+        
         //increase objsize later based on text length
 
         childSymbols[index].SetActive(true);
-        Material materialOfSymbol = childSymbols[index].GetComponent<MeshRenderer>().material;
-        ApplyMaterialAllMeshRenderers(materialOfSymbol);
+        currentSymbol = (Symbol)index;
+        ApplyMaterialAllMeshRenderers(materials[index]);
     }
 
     private void RandomizeSpawn()
     {
         Vector3 pos = transform.position;
-        float randomFloat = Random.Range(-margin, margin);
+        float randomFloat = Random.Range(margin / 2, margin);
+        if (Utils.GetRandomBool()) randomFloat *= -1;
         pos.x += randomFloat;
         transform.position = pos;
     }
@@ -64,8 +69,7 @@ public class Q3_Block : Interactable
 
     private void ApplyMaterialAllMeshRenderers(Material newMaterial)
     {
-        MeshRenderer[] meshRenderers = GetComponentsInChildren<MeshRenderer>();
-        foreach (var meshRenderer in meshRenderers)
+        foreach (var meshRenderer in meshRendererToChange)
         {
             meshRenderer.material = newMaterial;
         }
@@ -95,6 +99,15 @@ public class Q3_Block : Interactable
         GetComponent<Rigidbody>().useGravity = interactWithWorld;
     }
 
+    private Vector3 ContainInsideBorders(Vector3 currentPos)
+    {
+        Vector3 newPos;
+        newPos.z = transform.position.z;
+        newPos.y = Mathf.Clamp(currentPos.y, _pos.y, 10);
+        newPos.x = Mathf.Clamp(currentPos.x, _pos.x - margin, _pos.x + margin);
+        return newPos;
+    }
+
     private void Update()
     {
         if (isHolding)
@@ -103,11 +116,12 @@ public class Q3_Block : Interactable
             mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
             Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
 
-            mouseWorldPosition.z = transform.position.z;
-            
-            mouseWorldPosition.x = Mathf.Clamp(mouseWorldPosition.x, _posX - margin, _posX + margin);
-
-            transform.position = mouseWorldPosition;
+            transform.position = ContainInsideBorders(mouseWorldPosition);
         }
+    }
+
+    public Symbol GetSymbol()
+    {
+        return currentSymbol;
     }
 }

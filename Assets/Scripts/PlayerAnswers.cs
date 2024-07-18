@@ -1,7 +1,6 @@
 using System;
-using Unity.Mathematics;
+using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.Properties;
 using UnityEngine;
 
 public enum PlayerAttribute
@@ -14,6 +13,10 @@ public class PlayerAnswers : NetworkBehaviour
 {
     private static PlayerAttribute hostAttribute;
 
+    //question3
+    public List<Q3_HoldData> Q3Blocks = new();
+
+    //question4
     public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
     public NetworkVariable<float> NetworkSexMeter = new NetworkVariable<float>();
 
@@ -50,4 +53,5 @@ public class PlayerAnswers : NetworkBehaviour
         }
 
     }
+
 }

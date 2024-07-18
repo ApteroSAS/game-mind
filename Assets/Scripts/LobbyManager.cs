@@ -13,17 +13,29 @@ using System.Threading.Tasks;
 using Unity.Networking.Transport.Relay;
 using TMPro;
 
+public enum BuildType
+{
+    Windows,
+    WebGL,
+}
+
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField lobbyNameInputField;
     [SerializeField] private Button createLobbyButton;
     [SerializeField] private Button joinLobbyButton;
     [SerializeField] private Button leaveLobbyButton;
     [SerializeField] private TMP_InputField joinLobbyInputField;
-    [SerializeField] private TMP_Text lobbyCode;
-    [SerializeField] private UILobby uiLobby;
 
     private Lobby currentLobby;
+
+    public delegate void OnUITypeChange(TypeOfUIWindow typeOfUIWindow);
+    public OnUITypeChange onUITypeChange;
+
+    public delegate void OnLobbyCreation(string code);
+    public OnLobbyCreation onLobbyCreation;
+
+    [SerializeField] private BuildType buildType;
+    private string buildTypeData;
 
     async void Start()
     {
@@ -34,11 +46,23 @@ public class LobbyManager : MonoBehaviour
         createLobbyButton.onClick.AddListener(CreateLobby);
         joinLobbyButton.onClick.AddListener(JoinLobby);
         leaveLobbyButton.onClick.AddListener(LeaveLobby);
+
+        switch (buildType)
+        {
+            case BuildType.Windows:
+                buildTypeData = "dtsl";
+                break;
+            case BuildType.WebGL:
+                buildTypeData = "wss";
+                break;
+            default:
+                break;
+        }
     }
 
     private async void CreateLobby()
     {
-        string lobbyName = lobbyNameInputField.text;
+        string lobbyName = "";
         int maxPlayers = 2; // example max players
 
         try
@@ -100,11 +124,12 @@ public class LobbyManager : MonoBehaviour
         });
 
         UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-        transport.SetRelayServerData(new RelayServerData(allocation, "dtls"));
+        transport.SetRelayServerData(new RelayServerData(allocation, buildTypeData));
 
         NetworkManager.Singleton.StartHost();
-        lobbyCode.text = currentLobby.LobbyCode.ToString();
-        uiLobby.SetCurrentLobby(TypeOfLobbyWindow.INLOBBYMENU);
+        onLobbyCreation.Invoke(currentLobby.LobbyCode);
+        onUITypeChange.Invoke(TypeOfUIWindow.StoryMenu);
+        FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.Story);
     }
 
     private async Task JoinRelayServer()
@@ -113,11 +138,11 @@ public class LobbyManager : MonoBehaviour
         JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
         UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-        transport.SetRelayServerData(new RelayServerData(joinAllocation, "dtls"));
+        transport.SetRelayServerData(new RelayServerData(joinAllocation, buildTypeData));
 
         NetworkManager.Singleton.StartClient();
-        lobbyCode.text = currentLobby.LobbyCode.ToString();
-        uiLobby.SetCurrentLobby(TypeOfLobbyWindow.INLOBBYMENU);
+        onUITypeChange.Invoke(TypeOfUIWindow.StoryMenu);
+        FindFirstObjectByType<GameManager>().onGameStateChange.Invoke(GameState.Story); //makes it local?
     }
 
     private async void LeaveLobby()
@@ -140,9 +165,8 @@ public class LobbyManager : MonoBehaviour
                     NetworkManager.Singleton.Shutdown();
                 }
 
-                // Reset UI and other necessary variables
-                lobbyCode.text = "";
-                uiLobby.SetCurrentLobby(TypeOfLobbyWindow.LOBBYMENU);
+                onUITypeChange.Invoke(TypeOfUIWindow.LobbyMenu);
+                FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.LobbyMenu);
             }
         }
         catch (LobbyServiceException e)
