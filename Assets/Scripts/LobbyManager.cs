@@ -23,7 +23,6 @@ public class LobbyManager : MonoBehaviour
 {
     [SerializeField] private Button createLobbyButton;
     [SerializeField] private Button joinLobbyButton;
-    [SerializeField] private Button leaveLobbyButton;
     [SerializeField] private TMP_InputField joinLobbyInputField;
 
     private Lobby currentLobby;
@@ -45,7 +44,6 @@ public class LobbyManager : MonoBehaviour
 
         createLobbyButton.onClick.AddListener(CreateLobby);
         joinLobbyButton.onClick.AddListener(JoinLobby);
-        leaveLobbyButton.onClick.AddListener(LeaveLobby);
 
         switch (buildType)
         {
@@ -145,7 +143,7 @@ public class LobbyManager : MonoBehaviour
         FindFirstObjectByType<GameManager>().onGameStateChange.Invoke(GameState.Story); //makes it local?
     }
 
-    private async void LeaveLobby()
+    public async void LeaveLobby()
     {
         try
         {

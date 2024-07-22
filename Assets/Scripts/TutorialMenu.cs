@@ -18,7 +18,12 @@ public class TutorialMenu : MonoBehaviour
         if(darken)
         {
             canvasGroup.alpha -= Time.deltaTime * 0.1f;
-            if (canvasGroup.alpha <= 0) darken = false;
+            if (canvasGroup.alpha <= 0) 
+            {
+                darken = false;
+                canvasGroup.interactable = false;
+                canvasGroup.blocksRaycasts = false;
+            }
         }
     }
 

@@ -20,9 +20,6 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] public Transform playerSpawn;
 
-    private bool player1Ready = false;
-    private bool player2Ready = false;
-
     //Question3
     [SerializeField] private GameObject question3PodestPrefab;
     [SerializeField] private GameObject question3QuestionBlockPrefab;
@@ -35,6 +32,8 @@ public class GameManager : NetworkBehaviour
     private List<GameObject> spawnedInstances = new();
 
     public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>(GameState.Tutorial);
+    private NetworkVariable<bool> NetworkPlayer1Ready = new NetworkVariable<bool>(false);
+    private NetworkVariable<bool> NetworkPlayer2Ready = new NetworkVariable<bool>(false);
 
     public delegate void OnGameStateChange(GameState gameState);
     public OnGameStateChange onGameStateChange;
@@ -52,6 +51,7 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
+        return;
         if (Input.GetKeyDown(KeyCode.Alpha1)) if (IsServer) SetGameStateServerRpc(GameState.Question1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) if (IsServer) SetGameStateServerRpc(GameState.Question2);
         if (Input.GetKeyDown(KeyCode.Alpha3)) if (IsServer) SetGameStateServerRpc(GameState.Question3);
@@ -71,28 +71,38 @@ public class GameManager : NetworkBehaviour
     {
         var senderClientId = serverRpcParams.Receive.SenderClientId;
         bool senderClientIsHost = senderClientId == NetworkManager.Singleton.LocalClientId;
-        TogglePlayerReadyClientRpc(senderClientId, senderClientIsHost);
-    }
 
-    [ClientRpc]
-    private void TogglePlayerReadyClientRpc(ulong senderClientId, bool senderClientIsHost)
-    {
         if (senderClientIsHost)
         {
-            player1Ready = !player1Ready;
-            Debug.Log("Player " + senderClientId + " is ready? " + player1Ready);
-            onPlayerReadySend.Invoke(ResponsibleFor.Host, player1Ready);
+            NetworkPlayer1Ready.Value = !NetworkPlayer1Ready.Value;
+            TogglePlayerReadyClientRpc(senderClientIsHost, NetworkPlayer1Ready.Value);
         }
         else
         {
-            player2Ready = !player2Ready;
-            Debug.Log("Player " + senderClientId + " is ready? " + player2Ready);
-            onPlayerReadySend.Invoke(ResponsibleFor.Guest, player2Ready);
+            NetworkPlayer2Ready.Value = !NetworkPlayer2Ready.Value;
+            TogglePlayerReadyClientRpc(senderClientIsHost, NetworkPlayer2Ready.Value);
         }
 
-        if(player1Ready == true && player2Ready == true)
-        {
 
+        if (NetworkPlayer1Ready.Value == true && NetworkPlayer2Ready.Value == true)
+        {
+            GameState currentGameState = NetworkGameState.Value;
+            Debug.Log($"Current game state: {currentGameState}, new game state: {currentGameState++}");
+            currentGameState++;
+            SetGameStateServerRpc(currentGameState);
+        }
+    }
+
+    [ClientRpc]
+    private void TogglePlayerReadyClientRpc(bool senderClientIsHost, bool isReady)
+    {
+        if (senderClientIsHost)
+        {
+            onPlayerReadySend.Invoke(ResponsibleFor.Host, isReady);
+        }
+        else
+        {
+            onPlayerReadySend.Invoke(ResponsibleFor.Guest, isReady);
         }
     }
 
@@ -199,10 +209,6 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    private void StartNextGameState()
-    {
-
-    }
 
     [ServerRpc(RequireOwnership = true)]
     public void SetGameStateServerRpc(GameState newGameState)
@@ -215,18 +221,22 @@ public class GameManager : NetworkBehaviour
         SaveAnswersClientRpc(previousGameState);
         ClearInstancesClientRpc();
 
+        Debug.Log("Loading next gamestate, new state: " + newGameState);
         switch (newGameState)
         {
             case GameState.Tutorial:
                 break;
 
             case GameState.Question1:
+                SetGameStateServerRpc(GameState.Question2);
                 break;
 
             case GameState.Question2:
+                SetGameStateServerRpc(GameState.Question3);
                 break;
 
             case GameState.Question3:
+                Debug.Log("Spawning question 3");
                 SpawnQuestion3();
                 break;
 

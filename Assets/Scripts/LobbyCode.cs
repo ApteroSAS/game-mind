@@ -21,6 +21,7 @@ public class LobbyCode : MonoBehaviour
         copyButton.onClick.AddListener(CopyToClipboard);
 
         FindFirstObjectByType<LobbyManager>().onLobbyCreation += UpdateCode;
+        FindFirstObjectByType<LobbyManager>().onUITypeChange += HideCode;
         FindFirstObjectByType<GameManager>().onClientJoinLobby += HideCode;
     }
 
@@ -34,6 +35,11 @@ public class LobbyCode : MonoBehaviour
     private void HideCode()
     {
         canvasGroup.ToggleCanvasGroup(false);
+    }
+
+    private void HideCode(TypeOfUIWindow UIWindow)
+    {
+        if (UIWindow == TypeOfUIWindow.LobbyMenu) canvasGroup.ToggleCanvasGroup(false);
     }
 
     void CopyToClipboard()
