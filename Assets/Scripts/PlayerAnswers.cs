@@ -15,7 +15,7 @@ public class PlayerAnswers : NetworkBehaviour
 
     //question3
     [SerializeField] private GameObject Q3BlockPrefab;
-    public NetworkList<Q3_HoldData> Q3Blocks  = new();
+    public NetworkList<Q3_HoldData> NetworkQ3Blocks  = new();
 
     //question4
     public NetworkVariable<PlayerAttribute> NetworkAttribute = new();
@@ -61,13 +61,13 @@ public class PlayerAnswers : NetworkBehaviour
 
         Debug.Log("Showing results from host: " + isHost);
         //question3
-        for (int i = 0; i < Q3Blocks.Count; i++)
+        for (int i = 0; i < NetworkQ3Blocks.Count; i++)
         {
             Debug.Log("I'm index " + i + " from the cubes!");
             var Q3BlockInstance = Instantiate(Q3BlockPrefab);
-            Vector3 pos = Q3Blocks[i].PositionData;
+            Vector3 pos = NetworkQ3Blocks[i].PositionData;
             pos.x += offsetX;
-            Q3BlockInstance.GetComponent<Q3_Block>().OnInstantiateForResult(Q3Blocks[i].SymbolData, pos);
+            Q3BlockInstance.GetComponent<Q3_Block>().OnInstantiateForResult(NetworkQ3Blocks[i].SymbolData, pos);
         }
     }
 

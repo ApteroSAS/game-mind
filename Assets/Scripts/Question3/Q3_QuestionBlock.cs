@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Q3_QuestionBlock : Interactable
+public class Q3_QuestionBlock : MonoBehaviour, IInteractable
 {
     bool showingInformation = false;
     CanvasGroup canvasGroup;
@@ -10,14 +10,14 @@ public class Q3_QuestionBlock : Interactable
         canvasGroup = GetComponentInChildren<CanvasGroup>();
     }
 
-    public override void Interact()
+    public void Interact()
     {
         showingInformation = !showingInformation;
 
         canvasGroup.alpha = showingInformation ? 1 : 0;
     }
 
-    public override void StopInteract()
+    public void StopInteract()
     {
         //
     }

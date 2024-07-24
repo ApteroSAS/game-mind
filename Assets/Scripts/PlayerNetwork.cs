@@ -183,7 +183,7 @@ public class PlayerNetwork : NetworkBehaviour
         Physics.Raycast(povCamera.transform.position, transform.forward, out RaycastHit hit, 3f);
         if (hit.transform == null) return;
 
-        Interactable interactable = hit.transform.GetComponentInParent<Interactable>();
+        IInteractable interactable = hit.transform.GetComponentInParent<IInteractable>();
         if (interactable == null) return;
 
         interactable.Interact();
@@ -201,13 +201,13 @@ public class PlayerNetwork : NetworkBehaviour
 
             if (hit.transform == null) return;
             currentHitObject = hit.transform.gameObject;
-            Interactable interactable = currentHitObject.GetComponent<Interactable>();
+            IInteractable interactable = currentHitObject.GetComponent<IInteractable>();
             if (interactable != null) interactable.Interact();
         }
         if(Input.GetKeyUp(KeyCode.Mouse0))
         {
             if (currentHitObject == null) return;
-            Interactable interactable = currentHitObject.GetComponent<Interactable>(); 
+            IInteractable interactable = currentHitObject.GetComponent<IInteractable>(); 
             if (interactable != null) interactable.StopInteract();
             currentHitObject = null;
         }

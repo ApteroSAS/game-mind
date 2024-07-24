@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -12,7 +13,7 @@ public enum Symbol
     Triangle,
 }
 
-public class Q3_Block : Interactable
+public class Q3_Block : MonoBehaviour, IInteractable
 {
     [SerializeField] GameObject[] childSymbols;
     [SerializeField] Material[] materials;
@@ -47,7 +48,7 @@ public class Q3_Block : Interactable
         transform.position = pos;
         int index = (int)symbol;
 
-        ShowText(index, true);
+        ShowText(index);
         childSymbols[index].SetActive(true);
         ApplyMaterialAllMeshRenderers(materials[index]);
     }
@@ -55,7 +56,7 @@ public class Q3_Block : Interactable
     private void RandomizeSpawn()
     {
         Vector3 pos = transform.position;
-        float randomFloat = Random.Range(margin / 2, margin);
+        float randomFloat = UnityEngine.Random.Range(margin / 2, margin);
         if (Utils.GetRandomBool()) randomFloat *= -1;
         pos.x += randomFloat;
         transform.position = pos;
@@ -63,11 +64,10 @@ public class Q3_Block : Interactable
 
     private void ShowText(int index, bool showText)
     {
-        if (OwnerClientId != NetworkManager.Singleton.LocalClientId)
+        if (NetworkManager.Singleton.IsHost)
         {
             showText = !showText;
         }
-
         if (showText)
         {
             GetComponentInChildren<TextMeshProUGUI>().text = questionText[index];
@@ -76,8 +76,11 @@ public class Q3_Block : Interactable
         {
             GetComponentInChildren<TextMeshProUGUI>().enabled = false;
         }
+    }
 
-
+    private void ShowText(int index)
+    {
+        GetComponentInChildren<TextMeshProUGUI>().text = questionText[index];
     }
 
     private void ApplyMaterialAllMeshRenderers(Material newMaterial)
@@ -94,13 +97,14 @@ public class Q3_Block : Interactable
         Destroy(gameObject);
     }
 
-    public override void Interact()
+    public void Interact()
     {
+        if (!isInteractable) return;
         isHolding = true;
         SetPhysics(false);
     }
 
-    public override void StopInteract()
+    public void StopInteract()
     {
         isHolding = false;
         SetPhysics(true);
@@ -123,7 +127,6 @@ public class Q3_Block : Interactable
 
     private void Update()
     {
-        if (!isInteractable) return;
         if (isHolding)
         {
             Vector3 mouseScreenPosition = Input.mousePosition;
@@ -138,4 +141,20 @@ public class Q3_Block : Interactable
     {
         return currentSymbol;
     }
+
+    private void OnDestroy()
+    {
+        if (!isInteractable) return;
+        AddToNetworkQ3BlocksServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void AddToNetworkQ3BlocksServerRpc(ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        PlayerAnswers answers = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
+        Q3_HoldData q3_data = new Q3_HoldData(GetSymbol(), transform.position);
+        answers.NetworkQ3Blocks.Add(q3_data);
+    }
+
 }

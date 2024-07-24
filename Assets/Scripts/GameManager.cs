@@ -28,7 +28,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameObject question4Prefab;
     [SerializeField] private GameObject question4WandPrefab;
 
-    private List<GameObject> spawnedInstances = new();
+    public List<GameObject> spawnedInstances = new();
 
     public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>();
     private NetworkVariable<bool> NetworkPlayer1Ready = new NetworkVariable<bool>(false);
@@ -184,29 +184,29 @@ public class GameManager : NetworkBehaviour
         spawnedInstances.Clear();
     }
 
-    [ClientRpc]
-    private void SaveAnswersClientRpc(GameState previousGameState)
+    [ServerRpc]
+    private void SaveAnswersServerRpc(GameState previousGameState)
     {
-        if(previousGameState == GameState.Question3)
-        {
-            PlayerAnswers answers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
-            List<Q3_HoldData> q3_blocks = new();
-
-            foreach (var item in spawnedInstances)
-            {
-                Q3_Block q3_block = item.GetComponent<Q3_Block>();
-                if (q3_block == null) continue;
-
-                Q3_HoldData q3_data = new Q3_HoldData(q3_block.GetSymbol(), item.transform.position);
-                q3_blocks.Add(q3_data);
-
-            }
-            q3_blocks.Sort((a,b) => a.PositionData.y.CompareTo(b.PositionData.y));
-            foreach (var item in q3_blocks)
-            {
-                answers.Q3Blocks.Add(item);
-            }
-        }
+        //if(previousGameState == GameState.Question3)
+        //{
+        //    PlayerAnswers answers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
+        //    List<Q3_HoldData> q3_blocks = new();
+        //
+        //    foreach (var item in spawnedInstances)
+        //    {
+        //        Q3_Block q3_block = item.GetComponent<Q3_Block>();
+        //        if (q3_block == null) continue;
+        //
+        //        Q3_HoldData q3_data = new Q3_HoldData(q3_block.GetSymbol(), item.transform.position);
+        //        q3_blocks.Add(q3_data);
+        //
+        //    }
+        //    q3_blocks.Sort((a,b) => a.PositionData.y.CompareTo(b.PositionData.y));
+        //    foreach (var item in q3_blocks)
+        //    {
+        //        answers.Q3Blocks.Add(item);
+        //    }
+        //}
     }
 
     [ClientRpc]
@@ -228,17 +228,15 @@ public class GameManager : NetworkBehaviour
         if (previousGameState == newGameState)
             return;
 
-        SaveAnswersClientRpc(previousGameState);
+        SaveAnswersServerRpc(previousGameState);
         ClearInstancesClientRpc();
 
         switch (newGameState)
         {
             case GameState.Question1:
-                SetGameStateServerRpc(GameState.Question2);
                 break;
 
             case GameState.Question2:
-                SetGameStateServerRpc(GameState.Question3);
                 break;
 
             case GameState.Question3:
@@ -262,8 +260,8 @@ public class GameManager : NetworkBehaviour
         {
             if (instance != null)
             {
-                NetworkObject networkObject = instance.GetComponent<NetworkObject>();
-                if (networkObject != null) networkObject.Spawn();
+                Debug.Log("Trying to spawn " + instance.name);
+                if (instance.TryGetComponent<NetworkObject>(out var networkObject)) networkObject.Spawn();
             }
         }
     }

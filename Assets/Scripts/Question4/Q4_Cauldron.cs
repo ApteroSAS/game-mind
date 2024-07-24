@@ -2,7 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Q4_Cauldron : Interactable
+public class Q4_Cauldron : NetworkBehaviour, IInteractable
 {
     [SerializeField] private Material textureGuest;
     [SerializeField] private Slider slider;
@@ -27,12 +27,12 @@ public class Q4_Cauldron : Interactable
         UpdateSliderToClient();
     }
 
-    public override void Interact()
+    public void Interact()
     {
         isHolding = true;
     }
 
-    public override void StopInteract()
+    public void StopInteract()
     {
         isHolding = false;
         NetworkManager.LocalClient.PlayerObject.GetComponentInChildren<Q4_Wand>().ResetWand();
