@@ -23,6 +23,8 @@ public class Q3_Block : Interactable
     private Vector3 _pos;
     private readonly float margin = 2;
 
+    bool isInteractable = true;
+
 
     public void OnInstantiate(int index, bool showText)
     {
@@ -36,6 +38,17 @@ public class Q3_Block : Interactable
 
         childSymbols[index].SetActive(true);
         currentSymbol = (Symbol)index;
+        ApplyMaterialAllMeshRenderers(materials[index]);
+    }
+
+    public void OnInstantiateForResult(Symbol symbol, Vector3 pos)
+    {
+        isInteractable = false;
+        transform.position = pos;
+        int index = (int)symbol;
+
+        ShowText(index, true);
+        childSymbols[index].SetActive(true);
         ApplyMaterialAllMeshRenderers(materials[index]);
     }
 
@@ -110,6 +123,7 @@ public class Q3_Block : Interactable
 
     private void Update()
     {
+        if (!isInteractable) return;
         if (isHolding)
         {
             Vector3 mouseScreenPosition = Input.mousePosition;

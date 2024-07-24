@@ -1,7 +1,4 @@
-using Unity.Netcode;
-using UnityEngine;
-
-public abstract class Interactable : NetworkBehaviour
+public interface IInteractable
 {
     public abstract void Interact();
 

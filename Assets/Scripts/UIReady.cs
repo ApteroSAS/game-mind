@@ -16,11 +16,8 @@ public class UIReady : MonoBehaviour
         bool visible;
         switch (gameState)
         {
-            case GameState.Tutorial:
-                visible = true;
-                break;
             case GameState.Question1:
-                visible = false;
+                visible = true;
                 break;
             case GameState.Question2:
                 visible = true;
@@ -31,13 +28,10 @@ public class UIReady : MonoBehaviour
             case GameState.Question4:
                 visible = true;
                 break;
-            case GameState.End:
-                visible = false;
-                break;
             default:
                 visible = false;
                 break;
         }
-        canvasGroup.alpha = visible ? 1 : 0;
+        canvasGroup.ToggleCanvasGroup(visible);
     }
 }

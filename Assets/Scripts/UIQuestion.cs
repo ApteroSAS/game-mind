@@ -19,9 +19,6 @@ public class UIQuestion : MonoBehaviour
         bool visible = true;
         switch (gameState)
         {
-            case GameState.Tutorial:
-                visible = false;
-                break;
             case GameState.Question1:
                 questionText = "What is your couple's contract?";
                 break;
@@ -33,9 +30,6 @@ public class UIQuestion : MonoBehaviour
                 break;
             case GameState.Question4:
                 questionText = "How important is sexuality to you as a couple?";
-                break;
-            case GameState.End:
-                visible = false;
                 break;
             default:
                 visible = false;

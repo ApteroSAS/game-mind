@@ -6,7 +6,7 @@ using Unity.Netcode;
 public class ProgressGame : MonoBehaviour
 {
     private Button button;
-    private bool firstButtonPressed = false;
+    [SerializeField] private GameState[] gameStates;
 
     private void Awake()
     {
@@ -22,12 +22,12 @@ public class ProgressGame : MonoBehaviour
         GameManager gameManager = FindFirstObjectByType<GameManager>();
         gameManager.onPlayerReadyCheck.Invoke(serverRpcParams);
 
-        if (firstButtonPressed) return;
-        gameManager.onGameStateChange(GameState.Tutorial);
-        FindFirstObjectByType<LobbyManager>().onUITypeChange(TypeOfUIWindow.TutorialMenu);
-        firstButtonPressed = true;
-
+        for (int i = 0; i < gameStates.Length; i++)
+        {
+            if (gameStates[i] == GameState.Story)
+            {
+                FindFirstObjectByType<LobbyManager>().onUITypeChange.Invoke(TypeOfUIWindow.TutorialMenu);
+            }
+        }
     }
-
-
 }

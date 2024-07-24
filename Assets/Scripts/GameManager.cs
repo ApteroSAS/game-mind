@@ -6,12 +6,11 @@ public enum GameState
 {
     LobbyMenu,
     Story,
-    Tutorial,
     Question1,
     Question2,
     Question3,
     Question4,
-    End,
+    Result,
 }
 
 public class GameManager : NetworkBehaviour
@@ -31,7 +30,7 @@ public class GameManager : NetworkBehaviour
 
     private List<GameObject> spawnedInstances = new();
 
-    public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>(GameState.Tutorial);
+    public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>();
     private NetworkVariable<bool> NetworkPlayer1Ready = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> NetworkPlayer2Ready = new NetworkVariable<bool>(false);
 
@@ -47,17 +46,6 @@ public class GameManager : NetworkBehaviour
     public delegate void OnPlayerReadySend(ResponsibleFor responsibleFor, bool isReady);
     public OnPlayerReadySend onPlayerReadySend;
 
-
-
-    private void Update()
-    {
-        return;
-        if (Input.GetKeyDown(KeyCode.Alpha1)) if (IsServer) SetGameStateServerRpc(GameState.Question1);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) if (IsServer) SetGameStateServerRpc(GameState.Question2);
-        if (Input.GetKeyDown(KeyCode.Alpha3)) if (IsServer) SetGameStateServerRpc(GameState.Question3);
-        if (Input.GetKeyDown(KeyCode.Alpha4)) if (IsServer) SetGameStateServerRpc(GameState.Question4);
-    }
-
     void Start()
     {
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
@@ -71,6 +59,8 @@ public class GameManager : NetworkBehaviour
     {
         var senderClientId = serverRpcParams.Receive.SenderClientId;
         bool senderClientIsHost = senderClientId == NetworkManager.Singleton.LocalClientId;
+
+        Debug.Log("TogglePlayerReadyServerRpc got triggerd by player " + senderClientId);
 
         if (senderClientIsHost)
         {
@@ -86,9 +76,13 @@ public class GameManager : NetworkBehaviour
 
         if (NetworkPlayer1Ready.Value == true && NetworkPlayer2Ready.Value == true)
         {
+            NetworkPlayer1Ready.Value = false;
+            NetworkPlayer2Ready.Value = false;
+            TogglePlayerReadyClientRpc(true, false);
+            TogglePlayerReadyClientRpc(false, false);
             GameState currentGameState = NetworkGameState.Value;
-            Debug.Log($"Current game state: {currentGameState}, new game state: {currentGameState++}");
             currentGameState++;
+            Debug.Log("current: " + NetworkGameState.Value + " new: " + currentGameState);
             SetGameStateServerRpc(currentGameState);
         }
     }
@@ -123,7 +117,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    private void SpawnQuestion3()
+    private void SpawnQuestion3()   
     {
         var question3PodestInstance = Instantiate(question3PodestPrefab);
         spawnedInstances.Add(question3PodestInstance);
@@ -196,17 +190,33 @@ public class GameManager : NetworkBehaviour
         if(previousGameState == GameState.Question3)
         {
             PlayerAnswers answers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
-            answers.Q3Blocks.Clear();
+            List<Q3_HoldData> q3_blocks = new();
+
             foreach (var item in spawnedInstances)
             {
                 Q3_Block q3_block = item.GetComponent<Q3_Block>();
                 if (q3_block == null) continue;
 
                 Q3_HoldData q3_data = new Q3_HoldData(q3_block.GetSymbol(), item.transform.position);
-                answers.Q3Blocks.Add(q3_data);
+                q3_blocks.Add(q3_data);
+
             }
-            answers.Q3Blocks.Sort((a,b) => a.PositionData.y.CompareTo(b.PositionData.y));
+            q3_blocks.Sort((a,b) => a.PositionData.y.CompareTo(b.PositionData.y));
+            foreach (var item in q3_blocks)
+            {
+                answers.Q3Blocks.Add(item);
+            }
         }
+    }
+
+    [ClientRpc]
+    private void SpawnResultsClientRpc()
+    {
+        PlayerAnswers hostAnswers = NetworkManager.Singleton.ConnectedClients[0].PlayerObject.GetComponent<PlayerAnswers>();
+        PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[1].PlayerObject.GetComponent<PlayerAnswers>();
+
+        hostAnswers.ShowResults(true);
+        guestAnswers.ShowResults(false);
     }
 
 
@@ -221,12 +231,8 @@ public class GameManager : NetworkBehaviour
         SaveAnswersClientRpc(previousGameState);
         ClearInstancesClientRpc();
 
-        Debug.Log("Loading next gamestate, new state: " + newGameState);
         switch (newGameState)
         {
-            case GameState.Tutorial:
-                break;
-
             case GameState.Question1:
                 SetGameStateServerRpc(GameState.Question2);
                 break;
@@ -236,7 +242,6 @@ public class GameManager : NetworkBehaviour
                 break;
 
             case GameState.Question3:
-                Debug.Log("Spawning question 3");
                 SpawnQuestion3();
                 break;
 
@@ -244,7 +249,8 @@ public class GameManager : NetworkBehaviour
                 SpawnQuestion4();
                 break;
 
-            case GameState.End:
+            case GameState.Result:
+                SpawnResultsClientRpc();
                 break;
 
             default:

@@ -14,11 +14,12 @@ public class PlayerAnswers : NetworkBehaviour
     private static PlayerAttribute hostAttribute;
 
     //question3
-    public List<Q3_HoldData> Q3Blocks = new();
+    [SerializeField] private GameObject Q3BlockPrefab;
+    public NetworkList<Q3_HoldData> Q3Blocks  = new();
 
     //question4
-    public NetworkVariable<PlayerAttribute> NetworkAttribute = new NetworkVariable<PlayerAttribute>();
-    public NetworkVariable<float> NetworkSexMeter = new NetworkVariable<float>();
+    public NetworkVariable<PlayerAttribute> NetworkAttribute = new();
+    public NetworkVariable<float> NetworkSexMeter = new();
 
 
     public override void OnNetworkSpawn()
@@ -51,7 +52,23 @@ public class PlayerAnswers : NetworkBehaviour
         {
             NetworkAttribute.Value = hostAttribute == PlayerAttribute.Ice ? PlayerAttribute.Fire : PlayerAttribute.Ice;
         }
+    }
 
+    public void ShowResults(bool isHost)
+    {
+        float offsetX = 3;
+        if (isHost) offsetX *= -1;
+
+        Debug.Log("Showing results from host: " + isHost);
+        //question3
+        for (int i = 0; i < Q3Blocks.Count; i++)
+        {
+            Debug.Log("I'm index " + i + " from the cubes!");
+            var Q3BlockInstance = Instantiate(Q3BlockPrefab);
+            Vector3 pos = Q3Blocks[i].PositionData;
+            pos.x += offsetX;
+            Q3BlockInstance.GetComponent<Q3_Block>().OnInstantiateForResult(Q3Blocks[i].SymbolData, pos);
+        }
     }
 
 }

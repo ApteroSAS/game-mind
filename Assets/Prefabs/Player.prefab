@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2918129551
+  GlobalObjectIdHash: 3540873184
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832437cf0daa5c14099f3e74c68be6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Q3BlockPrefab: {fileID: 8643374920404057242, guid: 5984ac564896e9145963d0f0838819a1, type: 3}
   NetworkAttribute:
     m_InternalValue: 0
   NetworkSexMeter:
