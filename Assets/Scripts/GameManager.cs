@@ -19,6 +19,15 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] public Transform playerSpawn;
 
+    //Question1
+    [SerializeField] private GameObject question1Prefab;
+    [SerializeField] private GameObject easyLabyrinth;
+    [SerializeField] private GameObject hardLabyrinth;
+    [SerializeField] private GameObject indicator;
+
+    //Question2
+    [SerializeField] private GameObject question2CakeLayer;
+
     //Question3
     [SerializeField] private GameObject question3PodestPrefab;
     [SerializeField] private GameObject question3QuestionBlockPrefab;
@@ -115,6 +124,18 @@ public class GameManager : NetworkBehaviour
         {
             mainCamera.gameObject.SetActive(true);
         }
+    }
+
+    private void SpawnQuestion1()
+    {
+        var question1Instance = Instantiate(question1Prefab);
+        spawnedInstances.Add(question1Instance);
+    }
+
+    private void SpawnQuestion2()
+    {
+        var question2Instance = Instantiate(question2CakeLayer);
+        spawnedInstances.Add(question2Instance);
     }
 
     private void SpawnQuestion3()   
@@ -235,9 +256,11 @@ public class GameManager : NetworkBehaviour
         switch (newGameState)
         {
             case GameState.Question1:
+                SpawnQuestion1();
                 break;
 
             case GameState.Question2:
+                SpawnQuestion2();
                 break;
 
             case GameState.Question3:
