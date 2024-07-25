@@ -1039,7 +1039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawn: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
+  spawnPoint: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
 --- !u!54 &2555082874003715274
 Rigidbody:
   m_ObjectHideFlags: 0

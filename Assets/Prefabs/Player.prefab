@@ -275,6 +275,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Q3BlockResult: {fileID: 8643374920404057242, guid: 5c876d496746fcb4cbe1d4c8dc3ef3ab, type: 3}
+  Q3PodestPrefab: {fileID: 7709998548232873776, guid: dc1d5fd95a5572d439fc5235092c3147, type: 3}
+  Q4CauldronResult: {fileID: 2241810130262534342, guid: a95731e1d28ea6c4da322b730dc10587, type: 3}
   NetworkAttribute:
     m_InternalValue: 0
   NetworkSexMeter:

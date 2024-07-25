@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 714725699037496591}
   - component: {fileID: 2000010886434084897}
   - component: {fileID: 5824242628849335224}
-  - component: {fileID: -1120725337264877121}
   - component: {fileID: -7883837967695821584}
+  - component: {fileID: -1120725337264877121}
   - component: {fileID: 722993786175831709}
-  - component: {fileID: 2900865721476883517}
   m_Layer: 0
   m_Name: Q3_Podest
   m_TagString: Untagged
@@ -90,19 +89,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-1120725337264877121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7709998548232873776}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawn: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
 --- !u!114 &-7883837967695821584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,6 +110,19 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &-1120725337264877121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7709998548232873776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
 --- !u!64 &722993786175831709
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -146,24 +145,3 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -1388485733357891733, guid: bca684b92dd9f834a94ab8c10c2d14f8, type: 3}
---- !u!65 &2900865721476883517
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7709998548232873776}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 1.6, y: 6.2, z: 1.6}
-  m_Center: {x: 0, y: 3.04, z: 0}

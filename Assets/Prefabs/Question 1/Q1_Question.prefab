@@ -645,7 +645,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1430908265247751932}
   - component: {fileID: -2685645703926123000}
-  - component: {fileID: -8219635457628936584}
+  - component: {fileID: -7984278323900603264}
   m_Layer: 0
   m_Name: Q1_Question
   m_TagString: Untagged
@@ -681,7 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2086217896
+  GlobalObjectIdHash: 3620112071
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 0
@@ -690,7 +690,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &-8219635457628936584
+--- !u!114 &-7984278323900603264
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -699,9 +699,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 3252877877398777346}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9b9e85c35a128f4f9a764c7a1347994, type: 3}
+  m_Script: {fileID: 11500000, guid: d70036a21d1f30f4281264d2f1c826d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttons:
+  - {fileID: 2552327982053320466}
+  - {fileID: 4151672044678988828}
+  - {fileID: 725483116404040151}
+  - {fileID: 3858837542739229866}
+  - {fileID: 2741402292515829663}
+  textOfButton:
+  - Open
+  - Situationship
+  - Polyamorous
+  - Exclusive
+  - Asexual
 --- !u!1 &4124241331120103469
 GameObject:
   m_ObjectHideFlags: 0

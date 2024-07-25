@@ -29,7 +29,7 @@ public class Q3_Block : MonoBehaviour, IInteractable
 
     public void OnInstantiate(int index, bool showText)
     {
-        _pos = GetComponent<TeleportOnSpawn>().GetSpawn().position;
+        _pos = GetComponent<TeleportOnSpawn>().GetSpawnPoint();
         RandomizeSpawn();
 
         ShowText(index, showText);
@@ -145,4 +145,8 @@ public class Q3_Block : MonoBehaviour, IInteractable
         answers.AddToNetworkQ3BlocksServerRpc(q3_data);
     }
 
+    public void MoveOnSpawnClientRpc(Vector3 spawnPos)
+    {
+        transform.position = spawnPos;
+    }
 }

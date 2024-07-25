@@ -942,8 +942,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7474619854369257844}
   - component: {fileID: 141823898655828917}
-  - component: {fileID: 5856597999557983283}
   - component: {fileID: -3559285965312202185}
+  - component: {fileID: -3102533675007883680}
   m_Layer: 0
   m_Name: Q3_Block
   m_TagString: Untagged
@@ -1005,19 +1005,6 @@ MonoBehaviour:
   - {fileID: 6565273250824019855}
   - {fileID: 7212535903828705973}
   - {fileID: 6663496421424735936}
---- !u!114 &5856597999557983283
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8643374920404057242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawn: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
 --- !u!54 &-3559285965312202185
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1045,6 +1032,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
+--- !u!114 &-3102533675007883680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8643374920404057242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
 --- !u!1 &9088532098539959337
 GameObject:
   m_ObjectHideFlags: 0

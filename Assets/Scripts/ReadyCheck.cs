@@ -12,6 +12,8 @@ public class ReadyCheck : MonoBehaviour
     [SerializeField] private ResponsibleFor player;
     [SerializeField] private Image image;
 
+    private Color color = new Color(3, 3, 3);
+
     private void Awake()
     {
         image.color = Color.red;

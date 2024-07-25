@@ -1,5 +1,8 @@
+using NUnit.Framework;
 using Unity.Netcode;
 using UnityEngine;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public enum PlayerAttribute
 {
@@ -10,9 +13,11 @@ public enum PlayerAttribute
 public class PlayerAnswers : NetworkBehaviour
 {
     private static PlayerAttribute hostAttribute;
+    private List<GameObject> spawnedInstances = new();
 
     //question3
     [SerializeField] private GameObject Q3BlockResult;
+    [SerializeField] private GameObject Q3PodestPrefab;
     public NetworkList<Q3_HoldData> NetworkQ3Blocks  = new();
 
     //question4
@@ -62,21 +67,35 @@ public class PlayerAnswers : NetworkBehaviour
 
     public void ShowResults(bool isHost)
     {
-        float offsetX = 3;
+        float offsetX = 3.5f;
         if (isHost) offsetX *= -1;
 
         //question3
+        var Q3PodestInstance = Instantiate(Q3PodestPrefab);
+        Vector3 podestPos = ApplyOffsetToVector3(Q3PodestInstance.GetComponent<TeleportOnSpawn>().GetSpawnPoint(), offsetX);
+        Q3PodestInstance.GetComponent<NetworkObject>().Spawn();
+        Q3PodestInstance.GetComponent<TeleportOnSpawn>().MoveOnSpawnClientRpc(podestPos);
+
         for (int i = 0; i < NetworkQ3Blocks.Count; i++)
         {
             var Q3BlockInstance = Instantiate(Q3BlockResult);
-            Vector3 pos = NetworkQ3Blocks[i].PositionData;
-            pos.x += offsetX;
+            Vector3 blockPos = ApplyOffsetToVector3(NetworkQ3Blocks[i].PositionData, offsetX);
             Q3BlockInstance.GetComponent<NetworkObject>().Spawn();
-            Q3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(NetworkQ3Blocks[i].SymbolData, pos);
+            Q3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(NetworkQ3Blocks[i].SymbolData, blockPos);
         }
 
         //question4
+        var Q4CauldronInstance = Instantiate(Q4CauldronResult);
+        Vector3 cauldronPos = ApplyOffsetToVector3(Q4CauldronInstance.transform.position, offsetX);
+        Q4CauldronInstance.GetComponent<NetworkObject>().Spawn();
+        Q4CauldronInstance.GetComponent<Q4_Results>().OnSpawnClientRpc(NetworkSexMeter.Value, isHost, cauldronPos);
+    }
 
+    private Vector3 ApplyOffsetToVector3(Vector3 origin, float offsetX)
+    {
+        Vector3 newPos = origin;
+        newPos.x += offsetX;
+        return newPos;
     }
 
 

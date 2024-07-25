@@ -1,18 +1,24 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class TeleportOnSpawn : MonoBehaviour
+public class TeleportOnSpawn : NetworkBehaviour
 {
-    [SerializeField] private Transform spawn;
+    [SerializeField] private Transform spawnPoint;
 
     private void Awake()
     {
-        transform.position = spawn.position;
+        transform.position = spawnPoint.position;
     }
 
-    public Transform GetSpawn()
+    public Vector3 GetSpawnPoint()
     {
-        return spawn;
+        return spawnPoint.position;
     }
 
-
+    [ClientRpc]
+    public void MoveOnSpawnClientRpc(Vector3 newPos)
+    {
+        Debug.Log("I should be moving the podest");
+        transform.position = newPos;
+    }
 }

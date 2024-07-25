@@ -69,8 +69,6 @@ public class GameManager : NetworkBehaviour
         var senderClientId = serverRpcParams.Receive.SenderClientId;
         bool senderClientIsHost = senderClientId == NetworkManager.Singleton.LocalClientId;
 
-        Debug.Log("TogglePlayerReadyServerRpc got triggerd by player " + senderClientId);
-
         if (senderClientIsHost)
         {
             NetworkPlayer1Ready.Value = !NetworkPlayer1Ready.Value;
@@ -83,7 +81,7 @@ public class GameManager : NetworkBehaviour
         }
 
 
-        if (NetworkPlayer1Ready.Value == true && NetworkPlayer2Ready.Value == true)
+        if (NetworkPlayer1Ready.Value == true || NetworkPlayer2Ready.Value == true)
         {
             NetworkPlayer1Ready.Value = false;
             NetworkPlayer2Ready.Value = false;
@@ -91,7 +89,6 @@ public class GameManager : NetworkBehaviour
             TogglePlayerReadyClientRpc(false, false);
             GameState currentGameState = NetworkGameState.Value;
             currentGameState++;
-            Debug.Log("current: " + NetworkGameState.Value + " new: " + currentGameState);
             SetGameStateServerRpc(currentGameState);
         }
     }
@@ -206,38 +203,24 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void SaveAnswersServerRpc(GameState previousGameState)
-    {
-        //if(previousGameState == GameState.Question3)
-        //{
-        //    PlayerAnswers answers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
-        //    List<Q3_HoldData> q3_blocks = new();
-        //
-        //    foreach (var item in spawnedInstances)
-        //    {
-        //        Q3_Block q3_block = item.GetComponent<Q3_Block>();
-        //        if (q3_block == null) continue;
-        //
-        //        Q3_HoldData q3_data = new Q3_HoldData(q3_block.GetSymbol(), item.transform.position);
-        //        q3_blocks.Add(q3_data);
-        //
-        //    }
-        //    q3_blocks.Sort((a,b) => a.PositionData.y.CompareTo(b.PositionData.y));
-        //    foreach (var item in q3_blocks)
-        //    {
-        //        answers.Q3Blocks.Add(item);
-        //    }
-        //}
-    }
-
-    [ServerRpc]
     private void SpawnResultsServerRpc()
     {
-        PlayerAnswers hostAnswers = NetworkManager.Singleton.ConnectedClients[0].PlayerObject.GetComponent<PlayerAnswers>();
-        PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[1].PlayerObject.GetComponent<PlayerAnswers>();  
-        
-        hostAnswers.ShowResults(true);
-        guestAnswers.ShowResults(false);
+        foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (clientId != NetworkManager.Singleton.LocalClientId) 
+            {
+                PlayerAnswers hostAnswers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
+                PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
+
+                ResultManager resultManager = FindFirstObjectByType<ResultManager>();
+
+                resultManager.CalculateQuestion3(hostAnswers, guestAnswers);
+                resultManager.CalculateQuestion4(hostAnswers, guestAnswers);
+
+                hostAnswers.ShowResults(true);
+                guestAnswers.ShowResults(false);
+            }
+        }
     }
 
 
@@ -250,7 +233,6 @@ public class GameManager : NetworkBehaviour
         if (previousGameState == newGameState)
             return;
 
-        SaveAnswersServerRpc(previousGameState);
         ClearInstancesClientRpc();
 
         switch (newGameState)
@@ -294,5 +276,4 @@ public class GameManager : NetworkBehaviour
     {
         onGameStateChange.Invoke(gameState);
     }
-
 }

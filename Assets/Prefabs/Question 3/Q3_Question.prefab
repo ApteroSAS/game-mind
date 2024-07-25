@@ -648,9 +648,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7474619854369257844}
+  - component: {fileID: -4207185338935596282}
   - component: {fileID: 5856597999557983283}
   - component: {fileID: -3559285965312202185}
-  - component: {fileID: -4207185338935596282}
   - component: {fileID: 4161721543235537919}
   m_Layer: 0
   m_Name: Q3_Question
@@ -676,6 +676,27 @@ Transform:
   - {fileID: 1183769337837030145}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4207185338935596282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8643374920404057242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1184965196
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &5856597999557983283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -688,7 +709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawn: {fileID: 7793494188216654191, guid: 3b563ce2d53c2ac45aa8a7deb34b8f76, type: 3}
+  spawnPoint: {fileID: 7793494188216654191, guid: 3b563ce2d53c2ac45aa8a7deb34b8f76, type: 3}
 --- !u!54 &-3559285965312202185
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -716,27 +737,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 122
   m_CollisionDetection: 0
---- !u!114 &-4207185338935596282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8643374920404057242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3564994222
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 0
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!114 &4161721543235537919
 MonoBehaviour:
   m_ObjectHideFlags: 0
