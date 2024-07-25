@@ -209,15 +209,16 @@ public class GameManager : NetworkBehaviour
         //}
     }
 
-    [ClientRpc]
-    private void SpawnResultsClientRpc()
+    [ServerRpc]
+    private void SpawnResultsServerRpc()
     {
         PlayerAnswers hostAnswers = NetworkManager.Singleton.ConnectedClients[0].PlayerObject.GetComponent<PlayerAnswers>();
-        PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[1].PlayerObject.GetComponent<PlayerAnswers>();
-
+        PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[1].PlayerObject.GetComponent<PlayerAnswers>();  
+        
         hostAnswers.ShowResults(true);
         guestAnswers.ShowResults(false);
     }
+
 
 
     [ServerRpc(RequireOwnership = true)]
@@ -248,7 +249,7 @@ public class GameManager : NetworkBehaviour
                 break;
 
             case GameState.Result:
-                SpawnResultsClientRpc();
+                SpawnResultsServerRpc();
                 break;
 
             default:
@@ -260,7 +261,6 @@ public class GameManager : NetworkBehaviour
         {
             if (instance != null)
             {
-                Debug.Log("Trying to spawn " + instance.name);
                 if (instance.TryGetComponent<NetworkObject>(out var networkObject)) networkObject.Spawn();
             }
         }

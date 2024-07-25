@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,10 +12,11 @@ public class PlayerAnswers : NetworkBehaviour
     private static PlayerAttribute hostAttribute;
 
     //question3
-    [SerializeField] private GameObject Q3BlockPrefab;
+    [SerializeField] private GameObject Q3BlockResult;
     public NetworkList<Q3_HoldData> NetworkQ3Blocks  = new();
 
     //question4
+    [SerializeField] private GameObject Q4CauldronResult;
     public NetworkVariable<PlayerAttribute> NetworkAttribute = new();
     public NetworkVariable<float> NetworkSexMeter = new();
 
@@ -54,21 +53,31 @@ public class PlayerAnswers : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void AddToNetworkQ3BlocksServerRpc(Q3_HoldData q3_data, ServerRpcParams serverRpcParams = default)
+    {
+        var clientId = serverRpcParams.Receive.SenderClientId;
+        NetworkQ3Blocks.Add(q3_data);
+    }
+
     public void ShowResults(bool isHost)
     {
         float offsetX = 3;
         if (isHost) offsetX *= -1;
 
-        Debug.Log("Showing results from host: " + isHost);
         //question3
         for (int i = 0; i < NetworkQ3Blocks.Count; i++)
         {
-            Debug.Log("I'm index " + i + " from the cubes!");
-            var Q3BlockInstance = Instantiate(Q3BlockPrefab);
+            var Q3BlockInstance = Instantiate(Q3BlockResult);
             Vector3 pos = NetworkQ3Blocks[i].PositionData;
             pos.x += offsetX;
-            Q3BlockInstance.GetComponent<Q3_Block>().OnInstantiateForResult(NetworkQ3Blocks[i].SymbolData, pos);
+            Q3BlockInstance.GetComponent<NetworkObject>().Spawn();
+            Q3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(NetworkQ3Blocks[i].SymbolData, pos);
         }
+
+        //question4
+
     }
+
 
 }

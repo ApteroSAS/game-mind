@@ -92,11 +92,6 @@ public class Q3_Block : MonoBehaviour, IInteractable
     }
 
 
-    public void SetDestroy()
-    {
-        Destroy(gameObject);
-    }
-
     public void Interact()
     {
         if (!isInteractable) return;
@@ -145,16 +140,9 @@ public class Q3_Block : MonoBehaviour, IInteractable
     private void OnDestroy()
     {
         if (!isInteractable) return;
-        AddToNetworkQ3BlocksServerRpc();
-    }
-
-    [ServerRpc(RequireOwnership =false)]
-    private void AddToNetworkQ3BlocksServerRpc(ServerRpcParams serverRpcParams = default)
-    {
-        var clientId = serverRpcParams.Receive.SenderClientId;
-        PlayerAnswers answers = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
         Q3_HoldData q3_data = new Q3_HoldData(GetSymbol(), transform.position);
-        answers.NetworkQ3Blocks.Add(q3_data);
+        PlayerAnswers answers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
+        answers.AddToNetworkQ3BlocksServerRpc(q3_data);
     }
 
 }
