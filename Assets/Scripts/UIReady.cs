@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIReady : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class UIReady : MonoBehaviour
 
     private void Awake()
     {
-        gameManager.onGameStateChange += ShowCanvasBasedOnGameState;
+        gameManager.OnGameStateChangeAddListener(ShowCanvasBasedOnGameState);
         canvasGroup = GetComponent<CanvasGroup>();
     }
 

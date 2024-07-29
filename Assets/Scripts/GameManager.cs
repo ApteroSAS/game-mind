@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public enum GameState
 {
-    LobbyMenu,
+    Menu,
     Story,
     Question1,
+    Q1Labyrinth,
     Question2,
     Question3,
     Question4,
@@ -15,16 +16,14 @@ public enum GameState
 
 public class GameManager : NetworkBehaviour
 {
-    public Camera mainCamera;
-
-    [SerializeField] public Transform playerSpawn;
+    private Camera mainCamera;
 
     //Question1
     [SerializeField] private GameObject question1Prefab;
     [SerializeField] private GameObject easyLabyrinth;
     [SerializeField] private GameObject hardLabyrinth;
     [SerializeField] private GameObject indicator;
-
+    [SerializeField] private GameObject labyrinthCamera;
     //Question2
     [SerializeField] private GameObject question2CakeLayer;
 
@@ -39,57 +38,94 @@ public class GameManager : NetworkBehaviour
 
     public List<GameObject> spawnedInstances = new();
 
-    public NetworkVariable<GameState> NetworkGameState = new NetworkVariable<GameState>();
-    private NetworkVariable<bool> NetworkPlayer1Ready = new NetworkVariable<bool>(false);
-    private NetworkVariable<bool> NetworkPlayer2Ready = new NetworkVariable<bool>(false);
+    private GameState currentGameState = GameState.Menu;
+    private bool hostReady = false;
+    private bool guestReady = false;
+
+    #region GameState
 
     public delegate void OnGameStateChange(GameState gameState);
-    public OnGameStateChange onGameStateChange;
+    private OnGameStateChange onGameStateChange;
 
-    public delegate void OnClientJoinLobby();
-    public OnClientJoinLobby onClientJoinLobby;
+    public void OnGameStateChangeAddListener(OnGameStateChange listener)
+    {
+        onGameStateChange += listener;
+    }
+    public void OnGameStateChangeInvoke(GameState gameState)
+    {
+        onGameStateChange.Invoke(gameState);
+    }
 
-    public delegate void OnPlayerReadyCheck(ServerRpcParams serverRpcParams = default);
-    public OnPlayerReadyCheck onPlayerReadyCheck;
+    #endregion
+
+    #region PlayerReady
+
+    public delegate void OnPlayerReady(ServerRpcParams serverRpcParams = default);
+    private OnPlayerReady onPlayerReady;
+
+    public void OnPlayerReadyAddListener(OnPlayerReady listener)
+    {
+        onPlayerReady += listener;
+    }
+    public void OnPlayerReadyInvoke(ServerRpcParams serverRpcParams = default)
+    {
+        onPlayerReady.Invoke(serverRpcParams);
+    }
+
+    #endregion
+
+    private float readyTimer = 0;
+    private bool bothReady = false;
 
     public delegate void OnPlayerReadySend(ResponsibleFor responsibleFor, bool isReady);
     public OnPlayerReadySend onPlayerReadySend;
 
     void Start()
     {
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        mainCamera = Camera.main;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
 
-        onPlayerReadyCheck += TogglePlayerReadyServerRpc;
+        OnPlayerReadyAddListener(TogglePlayerReadyServerRpc);
+    }
+
+    private void FixedUpdate()
+    {
+        if (bothReady) readyTimer += Time.fixedDeltaTime;
+        if (readyTimer >= 1)
+        {
+            readyTimer = 0;
+            hostReady = false;
+            guestReady = false;
+            bothReady = false;
+            TogglePlayerReadyClientRpc(true, hostReady);
+            TogglePlayerReadyClientRpc(false, guestReady);
+            currentGameState++;
+            Debug.Log(currentGameState);
+            SetGameStateServerRpc(currentGameState);
+        }
     }
 
     [ServerRpc (RequireOwnership = false)]
-    private void TogglePlayerReadyServerRpc(ServerRpcParams serverRpcParams)
+    private void TogglePlayerReadyServerRpc(ServerRpcParams serverRpcParams = default)
     {
+        readyTimer = 0;
         var senderClientId = serverRpcParams.Receive.SenderClientId;
         bool senderClientIsHost = senderClientId == NetworkManager.Singleton.LocalClientId;
 
         if (senderClientIsHost)
         {
-            NetworkPlayer1Ready.Value = !NetworkPlayer1Ready.Value;
-            TogglePlayerReadyClientRpc(senderClientIsHost, NetworkPlayer1Ready.Value);
+            hostReady = !hostReady;
+            TogglePlayerReadyClientRpc(senderClientIsHost, hostReady);
         }
         else
         {
-            NetworkPlayer2Ready.Value = !NetworkPlayer2Ready.Value;
-            TogglePlayerReadyClientRpc(senderClientIsHost, NetworkPlayer2Ready.Value);
+            guestReady = !guestReady;
+            TogglePlayerReadyClientRpc(senderClientIsHost, guestReady);
         }
 
-
-        if (NetworkPlayer1Ready.Value == true || NetworkPlayer2Ready.Value == true)
+        if (hostReady == true && guestReady == true)
         {
-            NetworkPlayer1Ready.Value = false;
-            NetworkPlayer2Ready.Value = false;
-            TogglePlayerReadyClientRpc(true, false);
-            TogglePlayerReadyClientRpc(false, false);
-            GameState currentGameState = NetworkGameState.Value;
-            currentGameState++;
-            SetGameStateServerRpc(currentGameState);
+            bothReady = true;
         }
     }
 
@@ -106,19 +142,18 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    private void OnClientConnected(ulong clientId)
+    [ClientRpc]
+    private void StartStoryClientRpc()
     {
-        if (NetworkManager.Singleton.LocalClientId == clientId)
-        {
-            mainCamera.gameObject.SetActive(false);
-        }
-        else onClientJoinLobby.Invoke();
+        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.StoryMenu);
+
     }
 
     private void OnClientDisconnected(ulong clientId)
     {
         if (NetworkManager.Singleton.LocalClientId == clientId)
         {
+            NetworkManager.Singleton.LocalClient.PlayerObject.enabled = false;
             mainCamera.gameObject.SetActive(true);
         }
     }
@@ -129,13 +164,61 @@ public class GameManager : NetworkBehaviour
         spawnedInstances.Add(question1Instance);
     }
 
+    private void SpawnQ1Labyrinth()
+    {
+        foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            if (clientId != NetworkManager.Singleton.LocalClientId)
+            {
+                PlayerAnswers hostAnswers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
+                PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
+
+                if(hostAnswers.NetworkQ1Answer.Value == guestAnswers.NetworkQ1Answer.Value)
+                {
+                    var labyrinthInstance = Instantiate(easyLabyrinth);
+                    spawnedInstances.Add(labyrinthInstance);
+
+                    NetworkObject guestPlayerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+                    Transform teleportSpot = labyrinthInstance.GetComponent<Q1_Labyrinth>().GetTeleportSpot();
+                    guestPlayerObject.GetComponent<TeleportOnSpawn>().RotateAndMoveClientRpc(teleportSpot.position, teleportSpot.eulerAngles);
+
+                    var indicatorInstance = Instantiate(indicator, guestPlayerObject.transform);
+                    spawnedInstances.Add(indicatorInstance);
+
+                    NetworkObject hostPlayerObject = NetworkManager.Singleton.LocalClient.PlayerObject;
+                    var labyrinthCameraInstance = Instantiate(labyrinthCamera);
+                    labyrinthCameraInstance.GetComponent<Q1_CameraSize>().ChangeCameraSize();
+                    spawnedInstances.Add(labyrinthCameraInstance);
+                }
+                else
+                {
+                    var labyrinthInstance = Instantiate(hardLabyrinth);
+                    spawnedInstances.Add(labyrinthInstance);
+
+                    NetworkObject guestPlayerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+                    Transform teleportSpot = labyrinthInstance.GetComponent<Q1_Labyrinth>().GetTeleportSpot(); 
+                    guestPlayerObject.GetComponent<TeleportOnSpawn>().RotateAndMoveClientRpc(teleportSpot.position, teleportSpot.eulerAngles);
+
+                    var indicatorInstance = Instantiate(indicator, guestPlayerObject.transform);
+                    spawnedInstances.Add(indicatorInstance);
+
+                    NetworkObject hostPlayerObject = NetworkManager.Singleton.LocalClient.PlayerObject;
+                    var labyrinthCameraInstance = Instantiate(labyrinthCamera);
+                    spawnedInstances.Add(labyrinthCameraInstance);
+                }
+
+                TogglePlayerReadyServerRpc();
+            }
+        }
+    }
+
     private void SpawnQuestion2()
     {
         var question2Instance = Instantiate(question2CakeLayer);
         spawnedInstances.Add(question2Instance);
     }
 
-    private void SpawnQuestion3()   
+    private void SpawnQuestion3()
     {
         var question3PodestInstance = Instantiate(question3PodestPrefab);
         spawnedInstances.Add(question3PodestInstance);
@@ -214,6 +297,8 @@ public class GameManager : NetworkBehaviour
 
                 ResultManager resultManager = FindFirstObjectByType<ResultManager>();
 
+                resultManager.CalculateQuestion1(hostAnswers, guestAnswers);
+
                 resultManager.CalculateQuestion3(hostAnswers, guestAnswers);
                 resultManager.CalculateQuestion4(hostAnswers, guestAnswers);
 
@@ -228,17 +313,22 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = true)]
     public void SetGameStateServerRpc(GameState newGameState)
     {
-        GameState previousGameState = NetworkGameState.Value;
-        NetworkGameState.Value = newGameState;
-        if (previousGameState == newGameState)
-            return;
-
+        currentGameState = newGameState;
+        Debug.Log("CurrentGameState: " + currentGameState);
         ClearInstancesClientRpc();
 
-        switch (newGameState)
+        switch (currentGameState)
         {
+            case GameState.Story:
+                StartStoryClientRpc();
+                break;
+
             case GameState.Question1:
                 SpawnQuestion1();
+                break;
+
+            case GameState.Q1Labyrinth:
+                SpawnQ1Labyrinth();
                 break;
 
             case GameState.Question2:
@@ -261,7 +351,7 @@ public class GameManager : NetworkBehaviour
                 break;
         }
 
-        InvokeGameStateChangeClientRpc(newGameState);
+        InvokeGameStateChangeClientRpc(currentGameState);
         foreach (var instance in spawnedInstances)
         {
             if (instance != null)
@@ -274,6 +364,6 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void InvokeGameStateChangeClientRpc(GameState gameState)
     {
-        onGameStateChange.Invoke(gameState);
+        OnGameStateChangeInvoke(gameState);
     }
 }

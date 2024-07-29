@@ -5,6 +5,7 @@ public class TeleportOnSpawn : NetworkBehaviour
 {
     [SerializeField] private Transform spawnPoint;
 
+
     private void Awake()
     {
         transform.position = spawnPoint.position;
@@ -18,7 +19,13 @@ public class TeleportOnSpawn : NetworkBehaviour
     [ClientRpc]
     public void MoveOnSpawnClientRpc(Vector3 newPos)
     {
-        Debug.Log("I should be moving the podest");
         transform.position = newPos;
+    }
+
+    [ClientRpc]
+    public void RotateAndMoveClientRpc(Vector3 newPos, Vector3 newRot)
+    {
+        transform.position = newPos;
+        transform.eulerAngles = newRot;
     }
 }

@@ -10,7 +10,7 @@ public class TutorialMenu : MonoBehaviour
     {
         canvasGroup = GetComponent<CanvasGroup>();
 
-        FindFirstObjectByType<LobbyManager>().onUITypeChange += OpenTutorialMenu;
+        //FindFirstObjectByType<LobbyManager>().OnUITypeChangeAddListener(OpenTutorialMenu) += OpenTutorialMenu;
     }
 
     private void Update()

@@ -10,7 +10,6 @@ public class Q4_Results : NetworkBehaviour
     [ClientRpc]
     public void OnSpawnClientRpc(float value, bool isHost, Vector3 pos)
     {
-        Debug.Log("Cauldron gets moved");
         slider.value = value;
         transform.position = pos;
         if(!isHost)

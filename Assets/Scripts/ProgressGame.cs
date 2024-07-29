@@ -6,28 +6,51 @@ using Unity.Netcode;
 public class ProgressGame : MonoBehaviour
 {
     private Button button;
-    [SerializeField] private GameState[] gameStates;
+    [SerializeField] private Sprite unReadyTexture;
 
     private void Awake()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(Progress);
+
+        FindFirstObjectByType<GameManager>().OnGameStateChangeAddListener(ButtonInteractableBasedOnGameState);
     }
 
-    private void Progress()
+    public static void Progress()
     {
         ServerRpcParams serverRpcParams = default;
         ulong clientId = serverRpcParams.Receive.SenderClientId;
 
         GameManager gameManager = FindFirstObjectByType<GameManager>();
-        gameManager.onPlayerReadyCheck.Invoke(serverRpcParams);
+        gameManager.OnPlayerReadyInvoke(serverRpcParams); 
+    }
 
-        for (int i = 0; i < gameStates.Length; i++)
+    private void UpdateButtonTexture()
+    {
+        //change texture
+    }
+
+    private void ButtonInteractableBasedOnGameState(GameState gameState)
+    {
+        switch (gameState)
         {
-            if (gameStates[i] == GameState.Story)
-            {
-                FindFirstObjectByType<LobbyManager>().onUITypeChange.Invoke(TypeOfUIWindow.TutorialMenu);
-            }
+            case GameState.Story:
+                button.interactable = true;
+                break;
+
+            case GameState.Question2:
+                button.interactable = true;
+                break;
+            case GameState.Question3:
+                button.interactable = true;
+                break;
+            case GameState.Question4:
+                button.interactable = true;
+                break;
+
+            default:
+                button.interactable = false;
+                break;
         }
     }
 }

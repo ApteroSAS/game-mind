@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
@@ -11,7 +10,6 @@ using Unity.Netcode.Transports.UTP;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Networking.Transport.Relay;
-using TMPro;
 
 public enum BuildType
 {
@@ -21,17 +19,34 @@ public enum BuildType
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] private Button createLobbyButton;
-    [SerializeField] private Button joinLobbyButton;
-    [SerializeField] private TMP_InputField joinLobbyInputField;
-
     private Lobby currentLobby;
+    int maxPlayers = 2;
 
     public delegate void OnUITypeChange(TypeOfUIWindow typeOfUIWindow);
-    public OnUITypeChange onUITypeChange;
+    private OnUITypeChange onUITypeChange;
+
+    public void OnUITypeChangeAddListener(OnUITypeChange listener)
+    {
+        onUITypeChange += listener;
+    }
+
+    public void OnUITypeChangeInvoke(TypeOfUIWindow typeOfUIWindow)
+    {
+        onUITypeChange.Invoke(typeOfUIWindow);
+    }
 
     public delegate void OnLobbyCreation(string code);
-    public OnLobbyCreation onLobbyCreation;
+    private OnLobbyCreation onLobbyCreation;
+
+    public void OnLobbyCreationAddListener(OnLobbyCreation listener)
+    {
+        onLobbyCreation += listener;
+    }
+
+    public void OnLobbyCreationInvoke(string code)
+    {
+        onLobbyCreation.Invoke(code);
+    }
 
     [SerializeField] private BuildType buildType;
     private string buildTypeData;
@@ -42,13 +57,10 @@ public class LobbyManager : MonoBehaviour
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
         Debug.Log("Signed in as: " + AuthenticationService.Instance.PlayerId);
 
-        createLobbyButton.onClick.AddListener(CreateLobby);
-        joinLobbyButton.onClick.AddListener(JoinLobby);
-
         switch (buildType)
         {
             case BuildType.Windows:
-                buildTypeData = "dtsl";
+                buildTypeData = "dtls";
                 break;
             case BuildType.WebGL:
                 buildTypeData = "wss";
@@ -58,10 +70,9 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private async void CreateLobby()
+    public async void CreateLobby()
     {
         string lobbyName = "";
-        int maxPlayers = 2; // example max players
 
         try
         {
@@ -87,10 +98,8 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
-    private async void JoinLobby()
+    public async void JoinLobby(string lobbyCode)
     {
-        string lobbyCode = joinLobbyInputField.text;
-
         try
         {
             currentLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(lobbyCode);
@@ -107,7 +116,7 @@ public class LobbyManager : MonoBehaviour
 
     private async Task StartHost()
     {
-        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(2);
+        Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayers);
         string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
         // Update lobby data with the new Relay join code
@@ -125,9 +134,8 @@ public class LobbyManager : MonoBehaviour
         transport.SetRelayServerData(new RelayServerData(allocation, buildTypeData));
 
         NetworkManager.Singleton.StartHost();
-        onLobbyCreation.Invoke(currentLobby.LobbyCode);
-        onUITypeChange.Invoke(TypeOfUIWindow.StoryMenu);
-        FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.Story);
+        OnLobbyCreationInvoke(currentLobby.LobbyCode);
+        FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.AfterCreation);
     }
 
     private async Task JoinRelayServer()
@@ -139,8 +147,9 @@ public class LobbyManager : MonoBehaviour
         transport.SetRelayServerData(new RelayServerData(joinAllocation, buildTypeData));
 
         NetworkManager.Singleton.StartClient();
-        onUITypeChange.Invoke(TypeOfUIWindow.StoryMenu);
-        FindFirstObjectByType<GameManager>().onGameStateChange.Invoke(GameState.Story); //makes it local?
+        OnLobbyCreationInvoke(currentLobby.LobbyCode);
+        FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.AfterCreation);
+
     }
 
     public async void LeaveLobby()
@@ -163,8 +172,8 @@ public class LobbyManager : MonoBehaviour
                     NetworkManager.Singleton.Shutdown();
                 }
 
-                onUITypeChange.Invoke(TypeOfUIWindow.LobbyMenu);
-                FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.LobbyMenu);
+                FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.Start);
+                OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
             }
         }
         catch (LobbyServiceException e)

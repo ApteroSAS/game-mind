@@ -15,6 +15,11 @@ public class PlayerAnswers : NetworkBehaviour
     private static PlayerAttribute hostAttribute;
     private List<GameObject> spawnedInstances = new();
 
+    //question1
+    [SerializeField] private GameObject Q1Result;
+    public NetworkVariable<Q1Answer> NetworkQ1Answer = new();
+    private bool sameAnswer = false;
+
     //question3
     [SerializeField] private GameObject Q3BlockResult;
     [SerializeField] private GameObject Q3PodestPrefab;
@@ -35,9 +40,6 @@ public class PlayerAnswers : NetworkBehaviour
             AssignAttributeServerRpc();
             float randomFloat = UnityEngine.Random.Range(0.2f, 0.8f);
             NetworkSexMeter.Value = randomFloat;
-
-            var playerSpawn = FindFirstObjectByType<GameManager>().playerSpawn;
-            transform.position = playerSpawn.position;
         }
     }
 
@@ -70,6 +72,12 @@ public class PlayerAnswers : NetworkBehaviour
         float offsetX = 3.5f;
         if (isHost) offsetX *= -1;
 
+        //question1
+        var Q1Instance = Instantiate(Q1Result);
+        Vector3 q1pos = ApplyOffsetToVector3(Q1Instance.GetComponent<TeleportOnSpawn>().GetSpawnPoint(), offsetX);
+        Q1Instance.GetComponent<NetworkObject>().Spawn();
+        Q1Instance.GetComponent<Q1_Results>().OnSpawnClientRpc(q1pos, NetworkQ1Answer.Value, sameAnswer);
+
         //question3
         var Q3PodestInstance = Instantiate(Q3PodestPrefab);
         Vector3 podestPos = ApplyOffsetToVector3(Q3PodestInstance.GetComponent<TeleportOnSpawn>().GetSpawnPoint(), offsetX);
@@ -96,6 +104,11 @@ public class PlayerAnswers : NetworkBehaviour
         Vector3 newPos = origin;
         newPos.x += offsetX;
         return newPos;
+    }
+
+    public void SetSameAnswer(bool answer)
+    {
+        sameAnswer = answer;
     }
 
 

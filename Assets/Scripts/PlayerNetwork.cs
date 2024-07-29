@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -21,8 +20,8 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private bool noobControls = true;
 
-    private bool IsMovementEnabled = true;
-    private Transform head;
+    private bool IsMovementEnabled = false;
+    public Transform head;
     private Transform povCamera;
     private float groundOffset;
     private GameObject currentHitObject;
@@ -38,7 +37,8 @@ public class PlayerNetwork : NetworkBehaviour
         groundOffset = cc.height / 2 * transform.localScale.y;
         head = FindChildWithTag(transform, "PlayerHead");
         povCamera = FindChildWithTag(transform, "MainCamera");
-        povCamera.gameObject.SetActive(true);
+
+        transform.position = GetComponent<TeleportOnSpawn>().GetSpawnPoint();
     }
 
     private void EditorStuff()
@@ -129,14 +129,18 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void MoveCharacterNoob()
     {
+        Vector3 moveDirection = Vector3.zero;
+
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            transform.position += Time.deltaTime * moveSpeed * transform.forward;
+            moveDirection += transform.forward;
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            transform.position += Time.deltaTime * moveSpeed * -transform.forward;
+            moveDirection -= transform.forward;
         if (Input.GetKey(KeyCode.A))
-            transform.position += Time.deltaTime * moveSpeed * -transform.right;
+            moveDirection -= transform.right;
         if (Input.GetKey(KeyCode.D))
-            transform.position += Time.deltaTime * moveSpeed * transform.right;
+            moveDirection += transform.right;
+
+        rb.linearVelocity = moveDirection * moveSpeed + new Vector3(0, rb.linearVelocity.y, 0);
     }
 
     private void RotateCharacter()
@@ -253,9 +257,10 @@ public class PlayerNetwork : NetworkBehaviour
         return grounded;
     }
 
-    public void SetMovementEnabled(bool active)
+    public void EnableCameraAndMovement(bool active)
     {
         IsMovementEnabled = active;
+        povCamera.gameObject.SetActive(active);
     }
 
 }

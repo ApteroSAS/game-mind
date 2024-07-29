@@ -41,6 +41,22 @@ public class ResultManager : MonoBehaviour
         Debug.Log("Result value: " + result);
     }
 
+    private void SetSameAnswerClientRpc(bool sameAnswer)
+    {
+        NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>().SetSameAnswer(sameAnswer);
+    }
+
+    public void CalculateQuestion1(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
+    {
+        if (hostAnswers.NetworkQ1Answer.Value == guestAnswers.NetworkQ1Answer.Value)
+        {
+            AddToResult(question1MaxValue);
+            SetSameAnswerClientRpc(true);
+        }
+        else
+            AddToResult(-question1MaxValue);
+    }
+
     public void CalculateQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
         Symbol[] top3SymbolsHost = new Symbol[3];

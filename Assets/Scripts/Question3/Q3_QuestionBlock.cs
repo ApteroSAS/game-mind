@@ -1,20 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Q3_QuestionBlock : MonoBehaviour, IInteractable
 {
     bool showingInformation = false;
     CanvasGroup canvasGroup;
+    [SerializeField] Button xButton;
 
     private void Awake()
     {
         canvasGroup = GetComponentInChildren<CanvasGroup>();
+        xButton.onClick.AddListener(Interact);
     }
 
     public void Interact()
     {
         showingInformation = !showingInformation;
 
-        canvasGroup.alpha = showingInformation ? 1 : 0;
+        canvasGroup.ToggleCanvasGroup(showingInformation);
     }
 
     public void StopInteract()
