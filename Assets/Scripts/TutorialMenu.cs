@@ -42,7 +42,7 @@ public class TutorialMenu : MonoBehaviour
         {
             if (input == true) numberOfUniqueInputs++;
 
-            if(numberOfUniqueInputs >= 4 && timer >= timeout)
+            if(numberOfUniqueInputs >= 2 && timer >= timeout)
             {
                 canvasGroup.alpha -= Time.deltaTime;
                 if (canvasGroup.alpha <= 0)

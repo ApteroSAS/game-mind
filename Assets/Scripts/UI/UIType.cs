@@ -39,6 +39,24 @@ public class UIType : MonoBehaviour
             case GameState.Story:
                 FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.StoryMenu);
                 break;
+            case GameState.Question1:
+                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+                break;
+            case GameState.Q1Labyrinth:
+                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+                break;
+            case GameState.Question2:
+                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+                break;
+            case GameState.Question3:
+                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+                break;
+            case GameState.Question4:
+                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+                break;
+            case GameState.Result:
+                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+                break;
             default:
                 break;
         }

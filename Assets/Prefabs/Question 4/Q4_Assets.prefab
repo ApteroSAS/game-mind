@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.7882353}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -708,7 +708,6 @@ GameObject:
   - component: {fileID: 2701686919683647202}
   - component: {fileID: 9144780702166301302}
   - component: {fileID: 2476422311881609575}
-  - component: {fileID: 3966543274661358759}
   m_Layer: 0
   m_Name: book
   m_TagString: Untagged
@@ -786,20 +785,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &3966543274661358759
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5096343223482275652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e6208027ae20f243bd35eeb6b77cdeb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canvasGroup: {fileID: 4635432290826351866}
-  button: {fileID: 7466307217851018691}
 --- !u!1 &5335810767748256954
 GameObject:
   m_ObjectHideFlags: 0
@@ -1063,6 +1048,7 @@ GameObject:
   - component: {fileID: 452859965954804872}
   - component: {fileID: 398813847333388771}
   - component: {fileID: 347927178958788339}
+  - component: {fileID: 4839225597138021150}
   m_Layer: 0
   m_Name: pedestal
   m_TagString: Untagged
@@ -1160,6 +1146,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.90469587, y: 1.4194164, z: 0.5587433}
   m_Center: {x: 0, y: 0.7097082, z: -0.0000009536743}
+--- !u!114 &4839225597138021150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7511944159816711167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e6208027ae20f243bd35eeb6b77cdeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvasGroup: {fileID: 4635432290826351866}
+  button: {fileID: 7466307217851018691}
 --- !u!1 &7895555922100849161
 GameObject:
   m_ObjectHideFlags: 0
