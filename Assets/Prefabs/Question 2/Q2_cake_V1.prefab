@@ -339,6 +339,7 @@ GameObject:
   - component: {fileID: 2493327819679648589}
   - component: {fileID: 3103079589142776127}
   - component: {fileID: 9139331147725734261}
+  - component: {fileID: -5113155461091980709}
   m_Layer: 0
   m_Name: Q2_cake_V1
   m_TagString: Untagged
@@ -428,7 +429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3110706342
+  GlobalObjectIdHash: 1288500232
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 0
@@ -449,3 +450,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37598802578d90c4b9da0037e2147381, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-5113155461091980709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8910725897199321785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnPoint: {fileID: 561050386644867971, guid: b9d6a94ac0ba87f49a876cbb58ca5981, type: 3}

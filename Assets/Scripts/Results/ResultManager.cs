@@ -43,6 +43,7 @@ public class ResultManager : MonoBehaviour
         Debug.Log("Result value: " + result);
     }
 
+    [ClientRpc]
     private void SetSameAnswerClientRpc(bool sameAnswer)
     {
         NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>().SetSameAnswer(sameAnswer);
@@ -127,12 +128,12 @@ public class ResultManager : MonoBehaviour
         if (difference >= 0.25f)
         {
             UpdateResultInvokeClientRpc(-question4MaxValue);
-            q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(true);
+            q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(false);
         }
         else
         {
             UpdateResultInvokeClientRpc(question4MaxValue);
-            q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(false);
+            q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(true);
         }
     }
 

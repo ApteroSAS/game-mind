@@ -72,11 +72,12 @@ public class PlayerAnswers : NetworkBehaviour
         float offsetX = 3.5f;
         if (isHost) offsetX *= -1;
 
-        //question1
+        #region Question 1
         var Q1Instance = Instantiate(Q1Result);
         Vector3 q1pos = ApplyOffsetToVector3(Q1Instance.GetComponent<TeleportOnSpawn>().GetSpawnPoint(), offsetX);
         Q1Instance.GetComponent<NetworkObject>().Spawn();
         Q1Instance.GetComponent<Q1_Results>().OnSpawnClientRpc(q1pos, NetworkQ1Answer.Value, sameAnswer);
+        #endregion
 
         //question3
         var Q3PodestInstance = Instantiate(Q3PodestPrefab);

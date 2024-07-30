@@ -24,12 +24,14 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameObject hardLabyrinth;
     [SerializeField] private GameObject indicator;
     [SerializeField] private GameObject labyrinthCamera;
+    [SerializeField] private GameObject hostHelp;
+    [SerializeField] private GameObject guestHelp;
     //Question2
     [SerializeField] private GameObject question2CakeLayer;
 
     //Question3
     [SerializeField] private GameObject question3PodestPrefab;
-    [SerializeField] private GameObject question3QuestionBlockPrefab;
+    [SerializeField] private GameObject question3HelpPrefab;
     [SerializeField] private GameObject question3BlockPrefab;
 
     //Question4       
@@ -180,57 +182,57 @@ public class GameManager : NetworkBehaviour
                 PlayerAnswers hostAnswers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
                 PlayerAnswers guestAnswers = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerAnswers>();
 
+                GameObject labyrinthInstance;
+
                 if(hostAnswers.NetworkQ1Answer.Value == guestAnswers.NetworkQ1Answer.Value)
                 {
-                    var labyrinthInstance = Instantiate(easyLabyrinth);
-                    spawnedInstances.Add(labyrinthInstance);
+                    labyrinthInstance = Instantiate(easyLabyrinth);
 
-                    NetworkObject guestPlayerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-                    Transform teleportSpot = labyrinthInstance.GetComponent<Q1_Labyrinth>().GetTeleportSpot();
-                    guestPlayerObject.GetComponent<TeleportOnSpawn>().RotateAndMoveClientRpc(teleportSpot.position, teleportSpot.eulerAngles);
-
-                    var indicatorInstance = Instantiate(indicator, guestPlayerObject.transform);
-                    spawnedInstances.Add(indicatorInstance);
-
-                    NetworkObject hostPlayerObject = NetworkManager.Singleton.LocalClient.PlayerObject;
                     var labyrinthCameraInstance = Instantiate(labyrinthCamera);
                     labyrinthCameraInstance.GetComponent<Q1_CameraSize>().ChangeCameraSize();
                     spawnedInstances.Add(labyrinthCameraInstance);
                 }
                 else
                 {
-                    var labyrinthInstance = Instantiate(hardLabyrinth);
-                    spawnedInstances.Add(labyrinthInstance);
-
-                    NetworkObject guestPlayerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-                    Transform teleportSpot = labyrinthInstance.GetComponent<Q1_Labyrinth>().GetTeleportSpot(); 
-                    guestPlayerObject.GetComponent<TeleportOnSpawn>().RotateAndMoveClientRpc(teleportSpot.position, teleportSpot.eulerAngles);
-
-                    var indicatorInstance = Instantiate(indicator, guestPlayerObject.transform);
-                    spawnedInstances.Add(indicatorInstance);
-
-                    NetworkObject hostPlayerObject = NetworkManager.Singleton.LocalClient.PlayerObject;
-                    var labyrinthCameraInstance = Instantiate(labyrinthCamera);
-                    spawnedInstances.Add(labyrinthCameraInstance);
+                    labyrinthInstance = Instantiate(hardLabyrinth);
+                    InstantiateAndList(labyrinthCamera);
                 }
 
+                spawnedInstances.Add(labyrinthInstance);
+
+                NetworkObject guestPlayerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+                Transform teleportSpot = labyrinthInstance.GetComponent<Q1_Labyrinth>().GetTeleportSpot();
+                guestPlayerObject.GetComponent<TeleportOnSpawn>().RotateAndMoveClientRpc(teleportSpot.position, teleportSpot.eulerAngles);
+
+                var indicatorInstance = Instantiate(indicator, guestPlayerObject.transform);
+                spawnedInstances.Add(indicatorInstance);
+
+                SpawnQ1InfoClientRpc();
                 TogglePlayerReadyServerRpc();
             }
         }
     }
 
+    [ClientRpc]
+    private void SpawnQ1InfoClientRpc()
+    {
+        if (NetworkManager.Singleton.IsHost)
+            InstantiateAndList(hostHelp);
+        else
+            InstantiateAndList(guestHelp);
+        
+    }
+
     private void SpawnQuestion2()
     {
-        var question2Instance = Instantiate(question2CakeLayer);
-        spawnedInstances.Add(question2Instance);
+        InstantiateAndList(question2CakeLayer);
     }
 
     private void SpawnQuestion3()
     {
-        var question3PodestInstance = Instantiate(question3PodestPrefab);
-        spawnedInstances.Add(question3PodestInstance);
-        var question3QuestionBlockInstance = Instantiate(question3QuestionBlockPrefab);
-        spawnedInstances.Add(question3QuestionBlockInstance);
+        InstantiateAndList(question3PodestPrefab);
+        InstantiateAndList(question3HelpPrefab);
+
         bool[] randomBools = new bool[6];
         int countTrue = 0;
         int countFalse = 0;
@@ -264,8 +266,7 @@ public class GameManager : NetworkBehaviour
 
     private void SpawnQuestion4()
     {
-        var question4Instance = Instantiate(question4Prefab);
-        spawnedInstances.Add(question4Instance);
+        InstantiateAndList(question4Prefab);
         InstantiateWandsClientRpc();
     }
 
@@ -274,22 +275,10 @@ public class GameManager : NetworkBehaviour
     {
         GameObject playerObject = NetworkManager.LocalClient.PlayerObject.gameObject;
         PlayerAttribute attribute = playerObject.GetComponent<PlayerAnswers>().NetworkAttribute.Value;
+
         var question4wand = Instantiate(question4WandPrefab, playerObject.transform);
         spawnedInstances.Add(question4wand);
         question4wand.GetComponent<Q4_Wand>().SetWandColor(attribute);
-    }
-
-    [ClientRpc]
-    private void ClearInstancesClientRpc()
-    {
-        foreach (var instance in spawnedInstances)
-        {
-            if (instance != null)
-            {
-                Destroy(instance);
-            }
-        }
-        spawnedInstances.Clear();
     }
 
     [ServerRpc]
@@ -316,6 +305,35 @@ public class GameManager : NetworkBehaviour
     }
 
 
+    private void InstantiateAndList(GameObject newObject)
+    {
+        var newInstance = Instantiate(newObject);
+        spawnedInstances.Add(newInstance);
+    }
+
+    [ClientRpc]
+    private void ClearInstancesClientRpc()
+    {
+        foreach (var instance in spawnedInstances)
+        {
+            if (instance != null)
+            {
+                Destroy(instance);
+            }
+        }
+        spawnedInstances.Clear();
+    }
+
+    private void SpawnInstancesWhenPossible()
+    {
+        foreach (var instance in spawnedInstances)
+        {
+            if (instance != null)
+            {
+                if (instance.TryGetComponent<NetworkObject>(out var networkObject)) networkObject.Spawn();
+            }
+        }
+    }
 
     [ServerRpc(RequireOwnership = true)]
     public void SetGameStateServerRpc(GameState newGameState)
@@ -355,13 +373,7 @@ public class GameManager : NetworkBehaviour
         }
 
         InvokeGameStateChangeClientRpc(currentGameState);
-        foreach (var instance in spawnedInstances)
-        {
-            if (instance != null)
-            {
-                if (instance.TryGetComponent<NetworkObject>(out var networkObject)) networkObject.Spawn();
-            }
-        }
+        SpawnInstancesWhenPossible();
     }
 
     [ClientRpc]
@@ -369,4 +381,6 @@ public class GameManager : NetworkBehaviour
     {
         OnGameStateChangeInvoke(gameState);
     }
+
+
 }

@@ -2,15 +2,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
-using System.Xml;
 
 [RequireComponent(typeof(Button))]
+[RequireComponent(typeof(CanvasGroup))]
 public class ProgressGame : MonoBehaviour
 {
     [SerializeField] private Button button;
+    [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private TextMeshProUGUI textMesh;
     [SerializeField] private Sprite readyTexture;
     [SerializeField] private Sprite unReadyTexture;
+    [SerializeField] private TMP_FontAsset readyFont;
+    [SerializeField] private TMP_FontAsset unReadyFont;
     [SerializeField] private Image image;
 
     private void Awake()
@@ -19,7 +22,7 @@ public class ProgressGame : MonoBehaviour
 
         GameManager gameManager = FindFirstObjectByType<GameManager>();
         gameManager.OnGameStateChangeAddListener(ButtonInteractableBasedOnGameState);
-        gameManager.OnPlayerReadyReceiveAddListener(UpdateButtonTexture);
+        gameManager.OnPlayerReadyReceiveAddListener(UpdateButton);
         
     }
 
@@ -31,39 +34,37 @@ public class ProgressGame : MonoBehaviour
         gameManager.OnPlayerReadyInvoke(serverRpcParams); 
     }
 
-    private void UpdateButtonTexture(ResponsibleFor responsibleFor, bool isReady)
+    private void UpdateButton(ResponsibleFor responsibleFor, bool isReady)
     {
         if (NetworkManager.Singleton.IsHost)
         {
             if(responsibleFor == ResponsibleFor.Host)
             {
-                if (isReady)
-                {
-                    textMesh.text = "Ready!";
-                    image.sprite = readyTexture;
-                }
-                else
-                {
-                    textMesh.text = "Not ready";
-                    image.sprite = unReadyTexture;
-                }
+                UpdateButtonTexture(isReady);
             }
         }
         else
         {
             if(responsibleFor == ResponsibleFor.Guest)
             {
-                if (isReady)
-                {
-                    textMesh.text = "Ready!";
-                    image.sprite = readyTexture;
-                }
-                else
-                {
-                    textMesh.text = "Not ready";
-                    image.sprite = unReadyTexture;
-                }
+                UpdateButtonTexture(isReady);
             }
+        }
+    }
+
+    private void UpdateButtonTexture(bool isReady)
+    {
+        if (!isReady)
+        {
+            textMesh.text = "Ready!";
+            textMesh.font = readyFont;
+            image.sprite = readyTexture;
+        }
+        else
+        {
+            textMesh.text = "Not ready";
+            textMesh.font = unReadyFont;
+            image.sprite = unReadyTexture;
         }
     }
 
@@ -72,17 +73,17 @@ public class ProgressGame : MonoBehaviour
         switch (gameState)
         {
             case GameState.Question2:
-                button.interactable = true;
+                canvasGroup.ToggleCanvasGroup(true);
                 break;
             case GameState.Question3:
-                button.interactable = true;
+                canvasGroup.ToggleCanvasGroup(true);
                 break;
             case GameState.Question4:
-                button.interactable = true;
+                canvasGroup.ToggleCanvasGroup(true);
                 break;
 
             default:
-                button.interactable = false;
+                canvasGroup.ToggleCanvasGroup(false);
                 break;
         }
     }
