@@ -40,7 +40,8 @@ public class TutorialMenu : MonoBehaviour
         int numberOfUniqueInputs = 0;
         foreach (bool input in uniqueInputs)
         {
-            numberOfUniqueInputs++;
+            if (input == true) numberOfUniqueInputs++;
+
             if(numberOfUniqueInputs >= 4 && timer >= timeout)
             {
                 canvasGroup.alpha -= Time.deltaTime;
