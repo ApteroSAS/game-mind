@@ -123,14 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed9c2be78a82da479ca5f583b3cdecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  rotateSpeed: 1
-  jumpStrength: 5
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  noobControls: 1
   head: {fileID: 2477020108399058070}
+  povCamera: {fileID: 9215194683724006240}
+  moveSpeed: 5
+  rotateSpeed: 2
 --- !u!114 &1076573231713727632
 MonoBehaviour:
   m_ObjectHideFlags: 0
