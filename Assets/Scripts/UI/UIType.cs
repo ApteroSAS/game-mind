@@ -31,6 +31,7 @@ public class UIType : MonoBehaviour
 
     private void InvokeUIBasedOnGameState(GameState gameState)
     {
+        Debug.Log("I get invoked too often I think, should add an UIManager");
         switch (gameState)
         {
             case GameState.Menu:

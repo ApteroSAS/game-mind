@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using Unity.Netcode;
 using UnityEngine;
 
@@ -20,3 +21,4 @@ public class DebugManager : MonoBehaviour
     }
 
 }
+#endif

@@ -48,6 +48,19 @@ public class LobbyManager : MonoBehaviour
         onLobbyCreation.Invoke(code);
     }
 
+    public delegate void OnLobbyLeave();
+    private OnLobbyLeave onLobbyLeave;
+
+    public void OnLobbyLeaveAddListener(OnLobbyLeave listener)
+    {
+        onLobbyLeave += listener;
+    }
+
+    private void OnLobbyLeaveInvoke()
+    {
+        onLobbyLeave.Invoke();
+    }
+
     [SerializeField] private BuildType buildType;
     private string buildTypeData;
 
@@ -172,6 +185,7 @@ public class LobbyManager : MonoBehaviour
                     NetworkManager.Singleton.Shutdown();
                 }
 
+                OnLobbyLeaveInvoke();
                 FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.Start);
                 OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
             }
