@@ -13,4 +13,5 @@ public class InGameMenu : MonoBehaviour
         leaveLobbyButton.onClick.AddListener(lobbyManager.LeaveLobby);
     }
 
+
 }

@@ -1,12 +1,13 @@
+using System.Collections;
 using TMPro;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class StoryMenu : MonoBehaviour
 {
+    [SerializeField] private Camera lobbyCamera;
+
     [SerializeField] private TextMeshProUGUI textMesh;
     [SerializeField] private CanvasGroup arrow;
     [SerializeField] private Camera storyCamera;
@@ -18,17 +19,14 @@ public class StoryMenu : MonoBehaviour
         "Your adventure begins now. Are you ready to reveal the power of your love ?",
     };
 
-    private bool isActive = false;
     private int index = 0;
-    private bool videoEnded = false;
 
+    private bool isActive = false;
     private float alpha = 1;
     private bool ascending = false;
 
     private void Awake()
     {
-        storyVideo.loopPointReached += OnVideoEnd;
-
         FindFirstObjectByType<GameManager>().OnGameStateChangeAddListener(PlayVideo);
     }
 
@@ -36,8 +34,8 @@ public class StoryMenu : MonoBehaviour
     {
         if (isActive)
         {
-            if (ascending) alpha += 0.1f * Time.deltaTime;
-            else alpha -= 0.1f * Time.deltaTime;
+            if (ascending) alpha += 2f * Time.deltaTime;
+            else alpha -= 2f * Time.deltaTime;
 
             if (alpha <= 0) ascending = true;
             if (alpha >= 1) ascending = false;
@@ -53,34 +51,59 @@ public class StoryMenu : MonoBehaviour
     {
         if (index >= 3) 
         {
-            if (videoEnded)
-            {
-                isActive = false;
-                storyCamera.gameObject.SetActive(false);
-                NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerNetwork>().EnableCameraAndMovement(true);
-
-                ServerRpcParams serverRpcParams = default;
-                FindFirstObjectByType<GameManager>().OnPlayerReadyInvoke(serverRpcParams);
-            }
+            LoadNextScene();
             return;
         }
         index++;
         textMesh.text = paragraphs[index];
     }
 
+    private void LoadNextScene()
+    {
+        isActive = false;
+        storyCamera.gameObject.SetActive(false);
+        lobbyCamera.gameObject.SetActive(false);
+
+        NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerNetwork>().EnableCameraAndMovement(true);
+
+        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.TutorialMenu);
+        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+
+        ServerRpcParams serverRpcParams = default;
+        FindFirstObjectByType<GameManager>().OnPlayerReadyInvoke(serverRpcParams);
+    }
+
     private void PlayVideo(GameState gameState)
     {
         if (gameState == GameState.Story)
         {
-            isActive = true;
-            Camera.main.gameObject.SetActive(false);
-            storyCamera.gameObject.SetActive(true);
-            storyVideo.gameObject.SetActive(true);
+            StartCoroutine(PlayVideoAsync());
         }
     }
 
-    private void OnVideoEnd(VideoPlayer vp)
+    private void ResetScene()
     {
-        videoEnded = true;
+        isActive = true;
+        index = 0;
+        textMesh.text = paragraphs[index];
     }
+
+    IEnumerator PlayVideoAsync()
+    {
+        ResetScene();
+
+        string proxyUrl = "https://cors-anywhere.herokuapp.com/https://meet.aptero.co/files/public/Video/MIND-INTRO-video-low.mp4";
+        storyVideo.url = proxyUrl; // Direct link to the video file
+        storyVideo.Prepare();
+
+        while (!storyVideo.isPrepared)
+        {
+            yield return null;
+        }
+
+        lobbyCamera.gameObject.SetActive(false);
+        storyCamera.gameObject.SetActive(true);
+        storyVideo.Play();
+    }
+
 }

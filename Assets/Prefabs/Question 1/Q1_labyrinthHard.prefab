@@ -261,7 +261,6 @@ GameObject:
   - component: {fileID: 29342478533669799}
   - component: {fileID: 7602941507906808341}
   - component: {fileID: 3676261126116860104}
-  - component: {fileID: 6019542996696116773}
   m_Layer: 0
   m_Name: Q1_labyrinthHard
   m_TagString: Untagged
@@ -362,27 +361,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!65 &6019542996696116773
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4564758014918306022}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: -11.93, y: 1, z: -41}
 --- !u!1 &5320996615833409751
 GameObject:
   m_ObjectHideFlags: 0
@@ -395,6 +373,7 @@ GameObject:
   - component: {fileID: 995772348234487516}
   - component: {fileID: 7185436178938872228}
   - component: {fileID: 6699765300166643472}
+  - component: {fileID: 1089227068946882527}
   m_Layer: 0
   m_Name: Q1_labyrinthHard
   m_TagString: Untagged
@@ -465,6 +444,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   teleportSpot: {fileID: 1457504146754925086}
+--- !u!65 &1089227068946882527
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5320996615833409751}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 6.3, y: 1, z: 21.38}
 --- !u!1 &6115279760509834172
 GameObject:
   m_ObjectHideFlags: 0

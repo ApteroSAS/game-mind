@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7e0866609a1a7e4469fe429978a17d58, type: 2}
+  - {fileID: 2100000, guid: 4f93620620141ad4f9d67542bdd6b3e8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -242,7 +242,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5ff02fe01bb3def44bb289e8cf6b3a51, type: 2}
+  - {fileID: 2100000, guid: d4d9475cbcb495a439878e9528ead925, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -328,7 +328,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3b5dfd375681da24a873469fbcbdef7f, type: 2}
+  - {fileID: 2100000, guid: 292d64cbabbdd774389fb80459caea49, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -414,7 +414,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f0b5e68078afefc49ad618724d76cede, type: 2}
+  - {fileID: 2100000, guid: 753754cb62ad9b8409612aa8b7b2a627, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -586,7 +586,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 85acf22c487c6ed4589427867efb6826, type: 2}
+  - {fileID: 2100000, guid: 82c1003fd7b4ca0439af1629605b6cac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -643,7 +643,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.5, y: 0.3}
+  m_SizeDelta: {x: 50, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &890796575366805424
 CanvasRenderer:
@@ -675,8 +675,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Relationship step importance
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 343bc814885108943ba879169eb75412, type: 2}
+  m_sharedMaterial: {fileID: 3669543349365304173, guid: 343bc814885108943ba879169eb75412, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -700,8 +700,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.08
-  m_fontSizeBase: 0.08
+  m_fontSize: 5
+  m_fontSizeBase: 5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -772,7 +772,7 @@ RectTransform:
   m_GameObject: {fileID: 7083723898932489338}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.188}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3834332770235269061}
@@ -910,7 +910,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5a23f4ce4a673f14d9d3f8f84f48de80, type: 2}
+  - {fileID: 2100000, guid: e8ecae36204f7504c8ddb5e7925ba054, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -988,12 +988,12 @@ MonoBehaviour:
   - {fileID: 2833091197785375171}
   - {fileID: 6061269461119071290}
   materials:
-  - {fileID: 2100000, guid: 292d64cbabbdd774389fb80459caea49, type: 2}
-  - {fileID: 2100000, guid: 753754cb62ad9b8409612aa8b7b2a627, type: 2}
-  - {fileID: 2100000, guid: e8ecae36204f7504c8ddb5e7925ba054, type: 2}
-  - {fileID: 2100000, guid: 4f93620620141ad4f9d67542bdd6b3e8, type: 2}
-  - {fileID: 2100000, guid: d4d9475cbcb495a439878e9528ead925, type: 2}
-  - {fileID: 2100000, guid: 82c1003fd7b4ca0439af1629605b6cac, type: 2}
+  - {fileID: 2100000, guid: 3b5dfd375681da24a873469fbcbdef7f, type: 2}
+  - {fileID: 2100000, guid: f0b5e68078afefc49ad618724d76cede, type: 2}
+  - {fileID: 2100000, guid: 5a23f4ce4a673f14d9d3f8f84f48de80, type: 2}
+  - {fileID: 2100000, guid: 7e0866609a1a7e4469fe429978a17d58, type: 2}
+  - {fileID: 2100000, guid: 5ff02fe01bb3def44bb289e8cf6b3a51, type: 2}
+  - {fileID: 2100000, guid: 85acf22c487c6ed4589427867efb6826, type: 2}
   questionText:
   - The first look
   - The first exchange

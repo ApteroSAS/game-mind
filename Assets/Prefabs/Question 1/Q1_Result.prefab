@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3266286448
+  GlobalObjectIdHash: 1590079465
   InScenePlacedSourceGlobalObjectIdHash: 2086217896
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 0
@@ -83,7 +83,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   easyLabyrinth: {fileID: 4885363905262424161, guid: 22afb246b64641b4f990a0c4ce4c4e80, type: 3}
   hardLabyrinth: {fileID: 5320996615833409751, guid: e54c93659b9cff44599fd481e6a85966, type: 3}
-  easy: 0
 --- !u!1 &5512866681030255303
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,15 +252,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 10600e94b0b3c734bb069ab76d537df9, type: 2}
+  m_sharedMaterial: {fileID: 3669543349365304173, guid: 10600e94b0b3c734bb069ab76d537df9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -388,7 +387,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 8362c2d6da3f20a43a6f94ffd8d27c87, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -397,4 +396,4 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3

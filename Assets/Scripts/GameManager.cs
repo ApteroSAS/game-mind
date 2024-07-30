@@ -77,8 +77,22 @@ public class GameManager : NetworkBehaviour
     private float readyTimer = 0;
     private bool bothReady = false;
 
-    public delegate void OnPlayerReadySend(ResponsibleFor responsibleFor, bool isReady);
-    public OnPlayerReadySend onPlayerReadySend;
+    #region OnPlayerReadyReceive
+
+    public delegate void OnPlayerReadyReceive(ResponsibleFor responsibleFor, bool isReady);
+    private OnPlayerReadyReceive onPlayerReadyReceive;
+
+    public void OnPlayerReadyReceiveAddListener(OnPlayerReadyReceive listener)
+    {
+        onPlayerReadyReceive += listener;
+    }
+
+    public void OnPlayerReadyReceiveInvoke(ResponsibleFor responsibleFor, bool isReady)
+    {
+        onPlayerReadyReceive.Invoke(responsibleFor, isReady);
+    }
+
+    #endregion
 
     void Start()
     {
@@ -134,19 +148,12 @@ public class GameManager : NetworkBehaviour
     {
         if (senderClientIsHost)
         {
-            onPlayerReadySend.Invoke(ResponsibleFor.Host, isReady);
+            OnPlayerReadyReceiveInvoke(ResponsibleFor.Host, isReady);
         }
         else
         {
-            onPlayerReadySend.Invoke(ResponsibleFor.Guest, isReady);
+            OnPlayerReadyReceiveInvoke(ResponsibleFor.Guest, isReady);
         }
-    }
-
-    [ClientRpc]
-    private void StartStoryClientRpc()
-    {
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.StoryMenu);
-
     }
 
     private void OnClientDisconnected(ulong clientId)
@@ -319,10 +326,6 @@ public class GameManager : NetworkBehaviour
 
         switch (currentGameState)
         {
-            case GameState.Story:
-                StartStoryClientRpc();
-                break;
-
             case GameState.Question1:
                 SpawnQuestion1();
                 break;

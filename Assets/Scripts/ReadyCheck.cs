@@ -19,7 +19,7 @@ public class ReadyCheck : MonoBehaviour
     {
         image.color = redColor;
 
-        FindFirstObjectByType<GameManager>().onPlayerReadySend += ToggleColor;
+        FindFirstObjectByType<GameManager>().OnPlayerReadyReceiveAddListener(ToggleColor);
     }
 
     private void ToggleColor(ResponsibleFor responsibleFor, bool isReady)

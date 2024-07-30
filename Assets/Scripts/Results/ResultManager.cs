@@ -11,10 +11,12 @@ public class ResultManager : MonoBehaviour
     [SerializeField] private int question3MaxValue;
     [SerializeField] private int question4MaxValue;
 
-    [SerializeField] private GameObject question1Explanation; //they each have an interactable interface :) with text! and their ui bubble! in 3d space!
+    [SerializeField] private GameObject question1Explanation;
     [SerializeField] private GameObject question2Explanation;
     [SerializeField] private GameObject question3Explanation;
     [SerializeField] private GameObject question4Explanation;
+
+    [SerializeField] private GameObject finalSay;
 
     public delegate void UpdateResult(int value);
     private UpdateResult updateResult;
@@ -48,17 +50,28 @@ public class ResultManager : MonoBehaviour
 
     public void CalculateQuestion1(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        var q1InfoInstance = Instantiate(question1Explanation);
+        q1InfoInstance.GetComponent<NetworkObject>().Spawn();
         if (hostAnswers.NetworkQ1Answer.Value == guestAnswers.NetworkQ1Answer.Value)
         {
-            AddToResult(question1MaxValue);
+            UpdateResultInvokeClientRpc(question1MaxValue);
             SetSameAnswerClientRpc(true);
+            q1InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(true);
         }
         else
-            AddToResult(-question1MaxValue);
+        {
+            UpdateResultInvokeClientRpc(-question1MaxValue);
+            q1InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(false);
+        }
+
+
     }
 
     public void CalculateQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        var q3InfoInstance = Instantiate(question3Explanation);
+        q3InfoInstance.GetComponent<NetworkObject>().Spawn();
+
         Symbol[] top3SymbolsHost = new Symbol[3];
         Symbol[] top3SymbolsGuest = new Symbol[3];
 
@@ -94,23 +107,33 @@ public class ResultManager : MonoBehaviour
                 if (matchCount >= 2)
                 {
                     UpdateResultInvokeClientRpc(question3MaxValue);
+                    q3InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(true);
                     return;
                 }
             }
         }
         UpdateResultInvokeClientRpc(-question3MaxValue);
+        q3InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(false);
     }
 
     public void CalculateQuestion4(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        var q4InfoInstance = Instantiate(question4Explanation);
+        q4InfoInstance.GetComponent<NetworkObject>().Spawn();
+
         float hostMeter = hostAnswers.NetworkSexMeter.Value;
         float guestMeter = guestAnswers.NetworkSexMeter.Value;
         float difference = Mathf.Abs(hostMeter - guestMeter);
         if (difference >= 0.25f)
         {
             UpdateResultInvokeClientRpc(-question4MaxValue);
+            q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(true);
         }
-        else UpdateResultInvokeClientRpc(question4MaxValue);
+        else
+        {
+            UpdateResultInvokeClientRpc(question4MaxValue);
+            q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(false);
+        }
     }
 
 }

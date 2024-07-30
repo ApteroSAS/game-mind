@@ -1,34 +1,71 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CanvasGroup))]
 public class TutorialMenu : MonoBehaviour
 {
+    private bool[] uniqueInputs = new bool[10];
+    private float timer = 0f;
+    private float timeout = 5f;
     private CanvasGroup canvasGroup;
-    private bool darken = false;
+    private bool tutorialDone = true;
 
     private void Awake()
     {
-        canvasGroup = GetComponent<CanvasGroup>();
+        for (int i = 0; i < uniqueInputs.Length; i++)
+        {
+            uniqueInputs[i] = false;
+        }
 
-        //FindFirstObjectByType<LobbyManager>().OnUITypeChangeAddListener(OpenTutorialMenu) += OpenTutorialMenu;
+        canvasGroup = GetComponent<CanvasGroup>();
+        FindFirstObjectByType<LobbyManager>().OnUITypeChangeAddListener(TriggerTutorial);
     }
+
 
     private void Update()
     {
-        if(darken)
+        if (tutorialDone) return;
+
+        timer += Time.deltaTime;
+
+        if (Input.GetKeyDown(KeyCode.W)) uniqueInputs[0] = true;
+        if (Input.GetKeyDown(KeyCode.A)) uniqueInputs[1] = true;
+        if (Input.GetKeyDown(KeyCode.S)) uniqueInputs[2] = true;
+        if (Input.GetKeyDown(KeyCode.D)) uniqueInputs[3] = true;
+        if (Input.GetKeyDown(KeyCode.Q)) uniqueInputs[4] = true;
+        if (Input.GetKeyDown(KeyCode.E)) uniqueInputs[5] = true;
+        if (Input.GetKeyDown(KeyCode.UpArrow)) uniqueInputs[6] = true;
+        if (Input.GetKeyDown(KeyCode.DownArrow)) uniqueInputs[7] = true;
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) uniqueInputs[8] = true;
+        if (Input.GetKeyDown(KeyCode.RightArrow)) uniqueInputs[9] = true;
+
+        int numberOfUniqueInputs = 0;
+        foreach (bool input in uniqueInputs)
         {
-            canvasGroup.alpha -= Time.deltaTime * 0.1f;
-            if (canvasGroup.alpha <= 0) 
+            numberOfUniqueInputs++;
+            if(numberOfUniqueInputs >= 4 && timer >= timeout)
             {
-                darken = false;
-                canvasGroup.interactable = false;
-                canvasGroup.blocksRaycasts = false;
+                canvasGroup.alpha -= Time.deltaTime;
+                if (canvasGroup.alpha <= 0)
+                {
+                    tutorialDone = true;
+                    canvasGroup.ToggleCanvasGroup(false);
+                }
             }
         }
     }
 
-    private void OpenTutorialMenu(TypeOfUIWindow UIWindow) 
+    private void TriggerTutorial(TypeOfUIWindow typeOfUIWindow)
     {
-        if (UIWindow == TypeOfUIWindow.TutorialMenu) darken = true;
+        if(typeOfUIWindow == TypeOfUIWindow.TutorialMenu)
+        {
+            tutorialDone = false;
+            timer = 0;
+            canvasGroup.ToggleCanvasGroup(true);
+
+            for (int i = 0; i < uniqueInputs.Length; i++)
+            {
+                uniqueInputs[i] = false;
+            }
+        }
+
     }
 }
