@@ -27,7 +27,16 @@ Steps to publish the game (on itch.io):
 9. Embed options -> Click to launch in fullscreen
 10. Visibiliy and access: Public
 
-Steps to place it in your website*
+(Optional)* Still on itch.io:
+1. Top-bar: Metadata
+2. Inputmethods: Keyboard + Mouse
+3. Average session duration: a few minutes
+4. Multiplayer support: Server-based networked multiplaer
+5. Player count: Min 2 - Max 2
+6. What languages does your game support? English
+7. Accessibility: Color-blind friendly
+
+Steps to place it in your website*:
 1. Top-bar: Distribute
 2. Either use a widget to give easy access to get to the itch.io link OR use an embed game and have it playable on your website directly
 
