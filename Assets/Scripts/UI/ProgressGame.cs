@@ -30,7 +30,6 @@ public class ProgressGame : MonoBehaviour
     {
         ServerRpcParams serverRpcParams = default;
 
-        Debug.Log("Client " + NetworkManager.Singleton.LocalClientId + " wants to progress/unprogress");
         GameManager gameManager = FindFirstObjectByType<GameManager>();
         gameManager.OnPlayerReadyInvoke(serverRpcParams); 
     }

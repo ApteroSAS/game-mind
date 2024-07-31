@@ -98,5 +98,13 @@ public class SoundManager : MonoBehaviour
             return volumeSound;
     }
 
+    public bool GetCurrentIsMuted(SoundType soundType)
+    {
+        if (SoundType.MusicEffect == soundType)
+            return isMusicMuted;
+        else
+            return isSoundMuted;
+    }
+
 
 }

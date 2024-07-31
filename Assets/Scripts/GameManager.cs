@@ -44,7 +44,12 @@ public class GameManager : NetworkBehaviour
     private bool hostReady = false;
     private bool guestReady = false;
 
-    public bool singlePlayerMode = false;
+    private bool singlePlayerMode = false;
+
+    public void SetSinglePlayerMode(bool isSinglePlayer)
+    {
+        singlePlayerMode = isSinglePlayer;
+    }
 
     #region GameState
 

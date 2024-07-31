@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class DebugManager : MonoBehaviour
 {
+    private GameManager gameManager;
+
+    private void Awake()
+    {
+        gameManager = GetComponent<GameManager>();
+    }
+
     public void StartHost()
     {
         if(!NetworkManager.Singleton.IsServer)
@@ -17,8 +24,8 @@ public class DebugManager : MonoBehaviour
             Camera.main.gameObject.SetActive(false);
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerNetwork>().EnableCameraAndMovement(true);
 
-            FindFirstObjectByType<GameManager>().singlePlayerMode = true;
-            FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.Story);
+            gameManager.SetSinglePlayerMode(true);
+            gameManager.SetGameStateServerRpc(GameState.Story);
         }
     }
 
@@ -26,7 +33,7 @@ public class DebugManager : MonoBehaviour
     
     public void JumpToGameState()
     {
-        FindFirstObjectByType<GameManager>().SetGameStateServerRpc(newGameState);
+        gameManager.SetGameStateServerRpc(newGameState);
     }
 
 }

@@ -24,6 +24,7 @@ public class ResultManager : MonoBehaviour
 
     [SerializeField] private GameObject question3Result;
     [SerializeField] private GameObject question3Podest;
+    [SerializeField] private GameObject question3Spawn;
 
     [SerializeField] private GameObject question4Result;
 
@@ -82,6 +83,8 @@ public class ResultManager : MonoBehaviour
 
     private void SpawnQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        //this entire method needs reworking
+
         float offSetX = 2.5f;
 
         var question3PodestInstance = Instantiate(question3Podest);
@@ -89,11 +92,16 @@ public class ResultManager : MonoBehaviour
         podestPos.z += 1;
         question3PodestInstance.GetComponent<NetworkObject>().Spawn();
         question3PodestInstance.GetComponent<TeleportOnSpawn>().MoveOnSpawnClientRpc(podestPos);
+        float removeOffSetX = question3Spawn.transform.position.x * 2;
+
         for (int i = 0; i < hostAnswers.NetworkQ3Blocks.Count; i++)
         {
             var question3BlockInstance = Instantiate(question3Result);
-            Vector3 blockPos = ApplyOffsetToVector3(hostAnswers.NetworkQ3Blocks[i].PositionData, offSetX);
+
+            float blockOffSetX = offSetX - removeOffSetX;
+            Vector3 blockPos = ApplyOffsetToVector3(hostAnswers.NetworkQ3Blocks[i].PositionData, blockOffSetX);
             blockPos.z = podestPos.z;
+
             question3BlockInstance.GetComponent<NetworkObject>().Spawn();
             question3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(hostAnswers.NetworkQ3Blocks[i].SymbolData, blockPos);
         }
@@ -106,8 +114,11 @@ public class ResultManager : MonoBehaviour
         for (int i = 0; i < guestAnswers.NetworkQ3Blocks.Count; i++)
         {
             var question3BlockInstance = Instantiate(question3Result);
-            Vector3 blockPos = ApplyOffsetToVector3(guestAnswers.NetworkQ3Blocks[i].PositionData, -offSetX);
+
+            float blockOffSetX = - offSetX - removeOffSetX;
+            Vector3 blockPos = ApplyOffsetToVector3(guestAnswers.NetworkQ3Blocks[i].PositionData, blockOffSetX);
             blockPos.z = podestPos.z;
+
             question3BlockInstance.GetComponent<NetworkObject>().Spawn();
             question3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(guestAnswers.NetworkQ3Blocks[i].SymbolData, blockPos);
         }

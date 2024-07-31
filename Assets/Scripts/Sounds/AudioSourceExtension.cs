@@ -17,6 +17,7 @@ public class AudioSourceExtension : MonoBehaviour
         soundManager.OnVolumeChangeAddListener(ChangeVolume);
 
         audioSource.volume = soundManager.GetCurrentVolume(soundType);
+        audioSource.mute = soundManager.GetCurrentIsMuted(soundType);
     }
 
     private void ToggleMute(SoundType invokedSoundType, bool isMuted)
