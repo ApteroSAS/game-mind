@@ -90,14 +90,13 @@ public class LobbyManager : MonoBehaviour
     private void Update()
     {
         bool insideLobby = currentLobby != null;
-        Debug.Log("I'm inside a lobby:" + insideLobby);
         if (!insideLobby) return;
 
         timer += Time.deltaTime;
         if(timer >= timerCheckServer)
         {
             timer = 0f;
-            if (!NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton.LocalClient.PlayerObject == null)
             {
                 Debug.Log("Someone left server and I'm alone");
                 OnLobbyLeaveInvoke();
