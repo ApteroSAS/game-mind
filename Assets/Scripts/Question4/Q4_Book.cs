@@ -15,7 +15,6 @@ public class Q4_Book : MonoBehaviour, IInteractable
     public void Interact()
     {
         isVisible = !isVisible;
-        Debug.Log("canvas should be visible now: " + isVisible);
 
         canvasGroup.ToggleCanvasGroup(isVisible);
     }

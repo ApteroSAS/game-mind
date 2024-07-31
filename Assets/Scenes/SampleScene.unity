@@ -6515,6 +6515,13 @@ MonoBehaviour:
   question2Explanation: {fileID: 4613441439916971935, guid: 302b8817500ad4242b41b0c44f00d3f2, type: 3}
   question3Explanation: {fileID: 4613441439916971935, guid: ddb26dca318508048ab2242e28c5b65a, type: 3}
   question4Explanation: {fileID: 4613441439916971935, guid: 39a30db99cffffd49afdbff20d6000e5, type: 3}
+  question1Result: {fileID: 0}
+  question1EasyMiniLabyrinth: {fileID: 0}
+  question1HardMiniLabyrinth: {fileID: 0}
+  question2Result: {fileID: 0}
+  question3Result: {fileID: 0}
+  question3Podest: {fileID: 0}
+  question4Result: {fileID: 0}
   finalSay: {fileID: 0}
 --- !u!114 &871263448
 MonoBehaviour:
@@ -13875,6 +13882,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2078031574}
+  - component: {fileID: 2078031575}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -13897,6 +13905,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2078031575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2078031573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d50c8a66434f6574584ff5fd9c35b4d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2093177339 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7b30520317300ca448288c5df1714206, type: 3}

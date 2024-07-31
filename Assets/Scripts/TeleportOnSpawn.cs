@@ -8,6 +8,7 @@ public class TeleportOnSpawn : NetworkBehaviour
 
     private void Awake()
     {
+        if (spawnPoint == null) return;
         transform.position = spawnPoint.position;
     }
 

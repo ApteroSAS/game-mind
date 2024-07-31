@@ -102,6 +102,8 @@ public class GameManager : NetworkBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
 
         OnPlayerReadyAddListener(TogglePlayerReadyServerRpc);
+
+        FindFirstObjectByType<LobbyManager>().OnLobbyLeaveAddListener(ClearAllInstances);
     }
 
     private void FixedUpdate()
@@ -293,13 +295,8 @@ public class GameManager : NetworkBehaviour
 
                 ResultManager resultManager = FindFirstObjectByType<ResultManager>();
 
-                resultManager.CalculateQuestion1(hostAnswers, guestAnswers);
+                resultManager.SpawnResults(hostAnswers, guestAnswers);
 
-                resultManager.CalculateQuestion3(hostAnswers, guestAnswers);
-                resultManager.CalculateQuestion4(hostAnswers, guestAnswers);
-
-                hostAnswers.ShowResults(true);
-                guestAnswers.ShowResults(false);
             }
         }
     }
@@ -313,6 +310,11 @@ public class GameManager : NetworkBehaviour
 
     [ClientRpc]
     private void ClearInstancesClientRpc()
+    {
+        ClearAllInstances();
+    }
+
+    private void ClearAllInstances()
     {
         foreach (var instance in spawnedInstances)
         {

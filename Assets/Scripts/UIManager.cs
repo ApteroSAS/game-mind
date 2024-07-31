@@ -1,9 +1,7 @@
 using UnityEngine;
-using static LobbyManager;
 
 public class UIManager : MonoBehaviour
 {
-    int index = 0;
 
     public delegate void OnUITypeChange(TypeOfUIWindow typeOfUIWindow);
     private OnUITypeChange onUITypeChange;
@@ -26,8 +24,6 @@ public class UIManager : MonoBehaviour
 
     private void InvokeUIBasedOnGameState(GameState gameState)
     {
-        index++;
-        Debug.Log("I got invoked a total amount of: " + index);
         switch (gameState)
         {
             case GameState.Menu:

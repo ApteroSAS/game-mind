@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6993745650460492377}
   - component: {fileID: 20657464573049046}
-  - component: {fileID: -401798883347974672}
   - component: {fileID: -2290227454897380508}
   m_Layer: 0
   m_Name: Q1_Result
@@ -56,19 +55,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &-401798883347974672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 642391302030369028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnPoint: {fileID: 5827019856177702875, guid: ea8abeb022313fb449e070e33cc39b01, type: 3}
 --- !u!114 &-2290227454897380508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,8 +263,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
