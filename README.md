@@ -27,9 +27,9 @@ Steps to publish the game (on itch.io):
 9. Embed options -> Click to launch in fullscreen
 10. Visibiliy and access: Public
 
-* Steps to place it in your website
+Steps to place it in your website*
 1. Top-bar: Distribute
 2. Either use a widget to give easy access to get to the itch.io link OR use an embed game and have it playable on your website directly
 
 
-* marked - I'm not 100% sure, feel free to message me if I can help somehow, otherwise I hope you can help yourself!
+marked with an * means I'm not 100% sure, feel free to message me if I can help somehow, otherwise I hope you can help yourself!
