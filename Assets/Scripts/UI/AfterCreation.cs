@@ -17,7 +17,7 @@ public class AfterCreation : MonoBehaviour
         waitingText = waitingTextMesh.text;
         playButton.onClick.AddListener(StartStory);
 
-        FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeAddListener(SetTimer);
+        FindFirstObjectByType<LobbyManager>().OnLobbyCreationAddListener(SetTimer);
 
         NetworkManager.Singleton.OnClientConnectedCallback += ClientHasJoined;
     }
@@ -39,21 +39,11 @@ public class AfterCreation : MonoBehaviour
         }
     }
 
-    private void SetTimer(LobbyPanelUI lobbyPanelUI)
+    private void SetTimer(string placeHolder)
     {
-        switch (lobbyPanelUI)
-        {
-            case LobbyPanelUI.Start:
-                enableTimer = false;
-                break;
-            case LobbyPanelUI.AfterCreation:
-                playButton.gameObject.SetActive(false);
-                waitingTextMesh.text = waitingText;
-                enableTimer = true;
-                break;
-            default:
-                break;
-        }
+        playButton.gameObject.SetActive(false);
+        enableTimer = true;
+        waitingTextMesh.text = waitingText;
     }
 
     private void ClientHasJoined(ulong clientId)

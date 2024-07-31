@@ -10,7 +10,7 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] private Transform povCamera;
 
     [SerializeField] private float moveSpeed = 5;
-    [SerializeField][Range(0.5f, 3)] private float rotateSpeed = 0.5f;
+    [SerializeField] private float rotateSpeed = 10f;
 
     private bool IsMovementEnabled = false;
     private GameObject currentHitObject;
@@ -35,14 +35,6 @@ public class PlayerNetwork : NetworkBehaviour
         Interact();
     }
 
-    private void FixedUpdate()
-    {
-        if (!IsOwner) return;
-        if (!IsMovementEnabled) return;
-
-        RotateCharacterInFixedUpdate();
-    }
-
     private void MoveCharacter()
     {
         Vector3 moveDirection = Vector3.zero;
@@ -61,19 +53,22 @@ public class PlayerNetwork : NetworkBehaviour
 
     private void RotateCharacter()
     {
+        Vector3 currentRotation = transform.eulerAngles;
+        float newYRotation = currentRotation.y;
+
         if (Input.GetKeyDown(KeyCode.Q))
-            transform.Rotate(0, -45, 0);
+            newYRotation -= 45;
         if (Input.GetKeyDown(KeyCode.E))
-            transform.Rotate(0, 45, 0);
+            newYRotation += 45;
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+            newYRotation -= rotateSpeed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.RightArrow))
+            newYRotation += rotateSpeed * Time.deltaTime;
+
+        transform.eulerAngles = new Vector3(currentRotation.x, newYRotation, currentRotation.z);
     }
 
-    private void RotateCharacterInFixedUpdate()
-    {
-        if (Input.GetKey(KeyCode.LeftArrow))
-            transform.Rotate(0, -rotateSpeed, 0);
-        if (Input.GetKey(KeyCode.RightArrow))
-            transform.Rotate(0, rotateSpeed, 0);
-    }
 
     private void Interact()
     {

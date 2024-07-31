@@ -7,7 +7,7 @@ public class JoinLobbyInputField : MonoBehaviour
 
     private void Awake()
     {
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeAddListener(IsActiveBasedOnUI);
+        FindFirstObjectByType<UIManager>().OnUITypeChangeAddListener(IsActiveBasedOnUI);
     }
 
     private void Update()

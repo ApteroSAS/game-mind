@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class UICamera : MonoBehaviour
+public class LobbyCamera : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed = 1;
 

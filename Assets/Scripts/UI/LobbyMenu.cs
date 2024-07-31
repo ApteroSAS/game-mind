@@ -11,17 +11,20 @@ public class LobbyMenu : MonoBehaviour
 
     private void Awake()
     {
+        UIManager uiManager = FindFirstObjectByType<UIManager>();
         LobbyManager lobbyManager = FindFirstObjectByType<LobbyManager>();
 
         createLobbyButton.onClick.AddListener(lobbyManager.CreateLobby);
+
         joinLobbyButton.onClick.AddListener(() => lobbyManager.JoinLobby(inputLobbyCode.text));
-        returnButton.onClick.AddListener(() => ReturnButton(lobbyManager));
+
         returnButton.onClick.AddListener(lobbyManager.LeaveLobby);
+        returnButton.onClick.AddListener(() => ReturnButton(uiManager));
     }
 
-    private void ReturnButton(LobbyManager lobbyManager)
+    private void ReturnButton(UIManager uiManager)
     {
-        lobbyManager.OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
+        uiManager.OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
     }
 
 

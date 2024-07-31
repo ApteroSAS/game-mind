@@ -17,7 +17,7 @@ public class TutorialMenu : MonoBehaviour
         }
 
         canvasGroup = GetComponent<CanvasGroup>();
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeAddListener(TriggerTutorial);
+        FindFirstObjectByType<UIManager>().OnUITypeChangeAddListener(TriggerTutorial);
     }
 
 
@@ -62,15 +62,19 @@ public class TutorialMenu : MonoBehaviour
     {
         if(typeOfUIWindow == TypeOfUIWindow.TutorialMenu)
         {
-            tutorialDone = false;
-            timer = 0;
-            canvasGroup.ToggleCanvasGroup(true);
-
-            for (int i = 0; i < uniqueInputs.Length; i++)
-            {
-                uniqueInputs[i] = false;
-            }
+            ResetValues();
         }
+    }
 
+    private void ResetValues()
+    {
+        tutorialDone = false;
+        timer = 0;
+        canvasGroup.ToggleCanvasGroup(true);
+
+        for (int i = 0; i < uniqueInputs.Length; i++)
+        {
+            uniqueInputs[i] = false;
+        }
     }
 }

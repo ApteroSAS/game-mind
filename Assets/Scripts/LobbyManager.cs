@@ -22,18 +22,9 @@ public class LobbyManager : MonoBehaviour
     private Lobby currentLobby;
     int maxPlayers = 2;
 
-    public delegate void OnUITypeChange(TypeOfUIWindow typeOfUIWindow);
-    private OnUITypeChange onUITypeChange;
+    float timer = 0f;
+    float checkIfServer = 5f;
 
-    public void OnUITypeChangeAddListener(OnUITypeChange listener)
-    {
-        onUITypeChange += listener;
-    }
-
-    public void OnUITypeChangeInvoke(TypeOfUIWindow typeOfUIWindow)
-    {
-        onUITypeChange.Invoke(typeOfUIWindow);
-    }
 
     public delegate void OnLobbyCreation(string code);
     private OnLobbyCreation onLobbyCreation;
@@ -80,6 +71,19 @@ public class LobbyManager : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+
+    private void Update()
+    {
+        timer += Time.deltaTime;
+        if(timer >= checkIfServer)
+        {
+            timer = 0f;
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                OnLobbyLeaveInvoke();
+            }
         }
     }
 
@@ -148,7 +152,6 @@ public class LobbyManager : MonoBehaviour
 
         NetworkManager.Singleton.StartHost();
         OnLobbyCreationInvoke(currentLobby.LobbyCode);
-        FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.AfterCreation);
     }
 
     private async Task JoinRelayServer()
@@ -161,7 +164,6 @@ public class LobbyManager : MonoBehaviour
 
         NetworkManager.Singleton.StartClient();
         OnLobbyCreationInvoke(currentLobby.LobbyCode);
-        FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.AfterCreation);
 
     }
 
@@ -184,10 +186,7 @@ public class LobbyManager : MonoBehaviour
                 {
                     NetworkManager.Singleton.Shutdown();
                 }
-
                 OnLobbyLeaveInvoke();
-                FindFirstObjectByType<LobbyPanel>().OnLobbyPanelChangeInvoke(LobbyPanelUI.Start);
-                OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
             }
         }
         catch (LobbyServiceException e)

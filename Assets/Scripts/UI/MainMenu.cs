@@ -14,12 +14,10 @@ public class MainMenu : MonoBehaviour
 
         startButton.onClick.AddListener(() => InvokeUIType(TypeOfUIWindow.LobbyMenu));
         creditsButton.onClick.AddListener(() => InvokeUIType(TypeOfUIWindow.CreditsMenu));
-
-        //add music and sound logic
     }
 
     private void InvokeUIType(TypeOfUIWindow typeOfUiWindow)
     {
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(typeOfUiWindow);
+        FindFirstObjectByType<UIManager>().OnUITypeChangeInvoke(typeOfUiWindow);
     }
 }

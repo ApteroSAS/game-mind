@@ -20,8 +20,7 @@ public class UIType : MonoBehaviour
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeAddListener(ToggleCanvasGroup);
-        FindFirstObjectByType<GameManager>().OnGameStateChangeAddListener(InvokeUIBasedOnGameState);
+        FindFirstObjectByType<UIManager>().OnUITypeChangeAddListener(ToggleCanvasGroup);
     }
 
     private void ToggleCanvasGroup(TypeOfUIWindow newTypeOfUIWindow)
@@ -29,23 +28,6 @@ public class UIType : MonoBehaviour
         canvasGroup.ToggleCanvasGroup(newTypeOfUIWindow == typeOfUIWindow);
     }
 
-    private void InvokeUIBasedOnGameState(GameState gameState)
-    {
-        Debug.Log("I get invoked too often I think, should add an UIManager");
-        switch (gameState)
-        {
-            case GameState.Menu:
-                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
-                break;
-            case GameState.Story:
-                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.StoryMenu);
-                break;
-
-            default:
-                FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
-                break;
-        }
-    }
 
 
 }

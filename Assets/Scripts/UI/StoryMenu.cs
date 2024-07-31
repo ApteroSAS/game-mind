@@ -66,8 +66,10 @@ public class StoryMenu : MonoBehaviour
 
         NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerNetwork>().EnableCameraAndMovement(true);
 
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.TutorialMenu);
-        FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
+        UIManager uiManager = FindFirstObjectByType<UIManager>();
+
+        uiManager.OnUITypeChangeInvoke(TypeOfUIWindow.TutorialMenu);
+        uiManager.OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
     }
 
     private void PlayVideo(GameState gameState)

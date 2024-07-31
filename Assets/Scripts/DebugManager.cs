@@ -16,6 +16,8 @@ public class DebugManager : MonoBehaviour
         {
             Camera.main.gameObject.SetActive(false);
             NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerNetwork>().EnableCameraAndMovement(true);
+
+            FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.Story);
         }
     }
 

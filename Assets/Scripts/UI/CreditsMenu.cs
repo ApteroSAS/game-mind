@@ -7,13 +7,11 @@ public class CreditsMenu : MonoBehaviour
 
     private void Awake()
     {
-        LobbyManager lobbyManager = FindFirstObjectByType<LobbyManager>();
-
-        returnButton.onClick.AddListener(() => ReturnButton(lobbyManager));
+        returnButton.onClick.AddListener(ReturnButton);
     }
 
-    private void ReturnButton(LobbyManager lobbyManager)
+    private void ReturnButton()
     {
-        lobbyManager.OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
+        FindFirstObjectByType<UIManager>().OnUITypeChangeInvoke(TypeOfUIWindow.MainMenu);
     }
 }

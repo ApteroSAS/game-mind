@@ -1,50 +1,29 @@
 using UnityEngine;
-using UnityEngine.UI;
-
-public enum LobbyPanelUI
-{
-    Start,
-    AfterCreation,
-}
 
 public class LobbyPanel : MonoBehaviour
 {
     [SerializeField] CanvasGroup start;
     [SerializeField] CanvasGroup afterCreation;
 
-    public delegate void OnLobbyPanelChange(LobbyPanelUI lobbyPanelUI);
-    private OnLobbyPanelChange onLobbyPanelChange;
-
-    public void OnLobbyPanelChangeAddListener(OnLobbyPanelChange listener)
-    {
-        onLobbyPanelChange += listener;
-    }
-
-    public void OnLobbyPanelChangeInvoke(LobbyPanelUI lobbyPanelUI)
-    {
-        onLobbyPanelChange.Invoke(lobbyPanelUI);
-    }
 
     private void Awake()
     {
-        onLobbyPanelChange += ChangePanel;
+        LobbyManager lobbyManager = FindFirstObjectByType<LobbyManager>();
+
+        lobbyManager.OnLobbyCreationAddListener(ChangePanel);
+        lobbyManager.OnLobbyLeaveAddListener(ResetPanel);
     }
 
-    private void ChangePanel(LobbyPanelUI lobbyPanelUI)
+    private void ChangePanel(string placeHolder)
     {
-        switch (lobbyPanelUI)
-        {
-            case LobbyPanelUI.Start:
-                start.ToggleCanvasGroup(true);
-                afterCreation.ToggleCanvasGroup(false);
-                break;
-            case LobbyPanelUI.AfterCreation:
-                start.ToggleCanvasGroup(false);
-                afterCreation.ToggleCanvasGroup(true);
-                break;
-            default:
-                break;
-        }
+        start.ToggleCanvasGroup(false);
+        afterCreation.ToggleCanvasGroup(true);
+    }
+
+    private void ResetPanel()
+    {
+        start.ToggleCanvasGroup(true);
+        afterCreation.ToggleCanvasGroup(false);
     }
 
 
