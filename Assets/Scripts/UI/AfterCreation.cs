@@ -58,6 +58,7 @@ public class AfterCreation : MonoBehaviour
         {
             if (NetworkManager.Singleton.IsHost) return;
             waitingTextMesh.text = "Connected successfully!";
+            playButton.gameObject.SetActive(false);
         }
     }
 

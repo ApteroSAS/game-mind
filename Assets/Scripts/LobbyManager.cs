@@ -98,8 +98,8 @@ public class LobbyManager : MonoBehaviour
             timer = 0f;
             if (NetworkManager.Singleton.LocalClient.PlayerObject == null)
             {
-                Debug.Log("Someone left server and I'm alone");
                 OnLobbyLeaveInvoke();
+                currentLobby = null;
             }
         }
     }

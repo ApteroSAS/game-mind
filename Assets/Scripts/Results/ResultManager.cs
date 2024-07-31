@@ -55,6 +55,8 @@ public class ResultManager : MonoBehaviour
 
     public void SpawnResults(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        result = 0;
+
         CalculateQuestions(hostAnswers, guestAnswers);
 
         SpawnQuestion1(hostAnswers, guestAnswers);
@@ -80,7 +82,6 @@ public class ResultManager : MonoBehaviour
 
     private void SpawnQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
-        Debug.Log("doing question 3");
         float offSetX = 2.5f;
 
         var question3PodestInstance = Instantiate(question3Podest);
@@ -110,10 +111,9 @@ public class ResultManager : MonoBehaviour
             question3BlockInstance.GetComponent<NetworkObject>().Spawn();
             question3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(guestAnswers.NetworkQ3Blocks[i].SymbolData, blockPos);
         }
-        Debug.Log("end of spawnign question3");
     }
 
-    private void SpawnQuestion4(PlayerAnswers hostAnswers, PlayerAnswers questAnswers)
+    private void SpawnQuestion4(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
         float offSetX = 1f;
 
@@ -125,7 +125,7 @@ public class ResultManager : MonoBehaviour
         question4Instance = Instantiate(question4Result);
         cauldronPos = ApplyOffsetToVector3(question4Explanation.transform.position, -offSetX);
         question4Instance.GetComponent<NetworkObject>().Spawn();
-        question4Instance.GetComponent<Q4_Results>().OnSpawnClientRpc(hostAnswers.NetworkSexMeter.Value, false, cauldronPos);
+        question4Instance.GetComponent<Q4_Results>().OnSpawnClientRpc(guestAnswers.NetworkSexMeter.Value, false, cauldronPos);
     }
 
     private Vector3 ApplyOffsetToVector3(Vector3 origin, float offSetX)
