@@ -12,7 +12,7 @@ Steps to build the game:
 8. (Optional) Top-left: Edit -> Project Settings -> Player -> Change whatever name, texture, icon
 9. (Optional*) Top-left: Edit -> Project Settings -> Services -> Unlink Project
 10. (Optional*) Create your Unity Account, Link your Unity Account, On your Unity cloud connect Mind with 3 Services (Lobby, Player Authentication & Relay)
-11. Top-left: File -> Build Profiles | Under Platforms choose "WebGL" | Click on Build and choose a file to build the game into.
+12. Top-left: File -> Build Profiles | Under Platforms choose "WebGL" | Click on Build and choose a file to build the game into (Recommended, name that file "Build" or "Builds").
 
 Steps to publish the game (on itch.io):
 
