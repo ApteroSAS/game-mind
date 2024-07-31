@@ -25,6 +25,19 @@ public class StoryMenu : MonoBehaviour
     private float alpha = 1;
     private bool ascending = false;
 
+    public delegate void OnTextScroll();
+    private OnTextScroll onTextScroll;
+
+    public void OnTextScrollAddListener(OnTextScroll listener)
+    {
+        onTextScroll += listener;
+    }
+
+    public void OnTextScrollInvoke()
+    {
+        onTextScroll.Invoke();
+    }
+
     private void Awake()
     {
         FindFirstObjectByType<GameManager>().OnGameStateChangeAddListener(PlayVideo);
@@ -49,6 +62,7 @@ public class StoryMenu : MonoBehaviour
 
     private void LoadNextText()
     {
+        OnTextScrollInvoke();
         if (index >= 3) 
         {
             LoadNextScene();

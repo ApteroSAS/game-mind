@@ -22,8 +22,6 @@ public class TutorialMenu : MonoBehaviour
 
     private void Update()
     {
-
-
         if (tutorialDone) return;
 
         timer += Time.deltaTime;

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum SoundType
@@ -12,12 +10,6 @@ public class SoundManager : MonoBehaviour
 {
     [SerializeField][Range(0f,1f)] private float volumeMusic = 0.2f;
     [SerializeField][Range(0f,1f)] private float volumeSound = 0.2f;
-
-    [SerializeField] private AudioSource backgroundMusic;
-    [SerializeField] private AudioSource riverAndBirdsMusic;
-
-    public List<AudioSource> musics = new List<AudioSource>();
-    public List<AudioSource> sounds = new List<AudioSource>();
 
     private bool isMusicMuted = false;
     private bool isSoundMuted = false;
@@ -45,6 +37,10 @@ public class SoundManager : MonoBehaviour
     {
         onSoundTypeMuteToggle += listener;
     }
+    public void OnSoundTypeToggleMuteRemoveListener(OnSoundTypeToggleMute listener)
+    {
+        onSoundTypeMuteToggle -= listener;
+    }
 
     private void OnSoundTypeToggleMuteInvoke(SoundType soundType, bool isMuted)
     {
@@ -52,52 +48,55 @@ public class SoundManager : MonoBehaviour
     }
     #endregion
 
+    #region OnVolumeChange
+
+    public delegate void OnVolumeChange(SoundType soundType, float newVolume);
+    private OnVolumeChange onVolumeChange;
+
+    public void OnVolumeChangeAddListener(OnVolumeChange listener)
+    {
+        onVolumeChange += listener;
+    }
+
+    public void OnVolumeChangeRemoveListener(OnVolumeChange listener)
+    {
+        onVolumeChange -= listener;
+    }
+
+    public void OnVolumeChangeInvoke(SoundType soundType, float newVolume)
+    {
+        onVolumeChange.Invoke(soundType, newVolume);
+    }
+
+    #endregion
+
     private void Awake()
     {
-        musics.Add(backgroundMusic);
-        musics.Add(riverAndBirdsMusic);
-
         ToggleMuteSoundTypeAddListener(ToggleMute);
-        SetBaseVolume();
-
-        foreach (var item in musics)
-        {
-            item.Play();
-        }
     }
 
-    private void SetBaseVolume()
-    {
-        foreach (var item in musics)
-        {
-            item.volume = volumeMusic;
-        }
-
-        foreach (var item in sounds)
-        {
-            item.volume = volumeSound;
-        }
-    }
 
     private void ToggleMute(SoundType soundType)
     {
-        if(soundType == SoundType.MusicEffect)
+        if (soundType == SoundType.MusicEffect)
         {
             isMusicMuted = !isMusicMuted;
-            foreach (var item in musics)
-            {
-                item.mute = isMusicMuted;
-            }
             OnSoundTypeToggleMuteInvoke(soundType, isMusicMuted);
         }
         else
         {
             isSoundMuted = !isSoundMuted;
-            foreach (var item in sounds)
-            {
-                item.mute = isSoundMuted;
-            }
             OnSoundTypeToggleMuteInvoke(soundType, isSoundMuted);
         }
     }
+
+    public float GetCurrentVolume(SoundType soundType)
+    {
+        if (SoundType.MusicEffect == soundType) 
+            return volumeMusic;
+        else 
+            return volumeSound;
+    }
+
+
 }

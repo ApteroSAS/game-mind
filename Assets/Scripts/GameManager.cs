@@ -120,7 +120,6 @@ public class GameManager : NetworkBehaviour
             TogglePlayerReadyClientRpc(true, hostReady);
             TogglePlayerReadyClientRpc(false, guestReady);
             currentGameState++;
-            Debug.Log(currentGameState);
             SetGameStateServerRpc(currentGameState);
         }
     }
@@ -285,7 +284,7 @@ public class GameManager : NetworkBehaviour
 
         var question4wand = Instantiate(question4WandPrefab, playerObject.transform);
         spawnedInstances.Add(question4wand);
-        question4wand.GetComponent<Q4_Wand>().SetWandColor(attribute);
+        question4wand.GetComponent<Q4_Wand>().SetWandAttribute(attribute);
     }
 
     [ServerRpc]

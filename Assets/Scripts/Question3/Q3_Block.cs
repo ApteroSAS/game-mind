@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -19,13 +18,17 @@ public class Q3_Block : MonoBehaviour, IInteractable
     [SerializeField] Material[] materials;
     [SerializeField] string[] questionText;
     [SerializeField] MeshRenderer[] meshRendererToChange;
+    private AudioSourceExtension audioSourceExtension;
     private Symbol currentSymbol;
     private bool isHolding = false;
     private Vector3 _pos;
     private readonly float margin = 2;
 
-    bool isInteractable = true;
 
+    private void Awake()
+    {
+        audioSourceExtension = GetComponent<AudioSourceExtension>();
+    }
 
     public void OnInstantiate(int index, bool showText)
     {
@@ -39,17 +42,6 @@ public class Q3_Block : MonoBehaviour, IInteractable
 
         childSymbols[index].SetActive(true);
         currentSymbol = (Symbol)index;
-        ApplyMaterialAllMeshRenderers(materials[index]);
-    }
-
-    public void OnInstantiateForResult(Symbol symbol, Vector3 pos)
-    {
-        isInteractable = false;
-        transform.position = pos;
-        int index = (int)symbol;
-
-        ShowText(index);
-        childSymbols[index].SetActive(true);
         ApplyMaterialAllMeshRenderers(materials[index]);
     }
 
@@ -94,7 +86,7 @@ public class Q3_Block : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (!isInteractable) return;
+        audioSourceExtension.OnSoundPlayRandomPitch();
         isHolding = true;
         SetPhysics(false);
     }
@@ -139,7 +131,6 @@ public class Q3_Block : MonoBehaviour, IInteractable
 
     private void OnDestroy()
     {
-        if (!isInteractable) return;
         Q3_HoldData q3_data = new Q3_HoldData(GetSymbol(), transform.position);
         PlayerAnswers answers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
         answers.AddToNetworkQ3BlocksServerRpc(q3_data);

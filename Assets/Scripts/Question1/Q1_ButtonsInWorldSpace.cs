@@ -38,12 +38,8 @@ public class Q1_ButtonsInWorldSpace : NetworkBehaviour
 
     private void Progress()
     {
+        transform.position = new Vector3(transform.position.x, -20, transform.position.z);
         ProgressGame.Progress();
-
-        foreach (var item in buttons)
-        {
-            item.gameObject.SetActive(false);
-        }
     }
 
 }

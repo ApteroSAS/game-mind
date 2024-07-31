@@ -66,4 +66,5 @@ public class AfterCreation : MonoBehaviour
     {
         FindFirstObjectByType<GameManager>().SetGameStateServerRpc(GameState.Story);
     }
+
 }

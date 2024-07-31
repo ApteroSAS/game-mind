@@ -83,13 +83,13 @@ public class PlayerNetwork : NetworkBehaviour
             if (hit.transform == null) return;
             currentHitObject = hit.transform.gameObject;
             IInteractable interactable = currentHitObject.GetComponent<IInteractable>();
-            if (interactable != null) interactable.Interact();
+            interactable?.Interact();
         }
         if(Input.GetKeyUp(KeyCode.Mouse0))
         {
             if (currentHitObject == null) return;
             IInteractable interactable = currentHitObject.GetComponent<IInteractable>(); 
-            if (interactable != null) interactable.StopInteract();
+            interactable?.StopInteract();
             currentHitObject = null;
         }
     }
