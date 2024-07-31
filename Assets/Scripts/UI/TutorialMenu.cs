@@ -1,4 +1,3 @@
-using Unity.Netcode;
 using UnityEngine;
 
 public class TutorialMenu : MonoBehaviour
@@ -23,6 +22,8 @@ public class TutorialMenu : MonoBehaviour
 
     private void Update()
     {
+
+
         if (tutorialDone) return;
 
         timer += Time.deltaTime;
@@ -42,16 +43,16 @@ public class TutorialMenu : MonoBehaviour
         foreach (bool input in uniqueInputs)
         {
             if (input == true) numberOfUniqueInputs++;
+        }
 
-            if(numberOfUniqueInputs >= 2 || timer >= timeout)
+        if (numberOfUniqueInputs >= 2 || timer >= timeout)
+        {
+            canvasGroup.alpha -= Time.deltaTime;
+            if (canvasGroup.alpha <= 0f)
             {
-                canvasGroup.alpha -= Time.deltaTime;
-                if (canvasGroup.alpha <= 0.1f)
-                {
-                    tutorialDone = true;
-                    canvasGroup.ToggleCanvasGroup(false);
-                    ProgressGame.Progress();    
-                }
+                tutorialDone = true;
+                ProgressGame.Progress();
+                canvasGroup.ToggleCanvasGroup(false);
             }
         }
     }
