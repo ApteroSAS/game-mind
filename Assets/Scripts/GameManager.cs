@@ -8,7 +8,7 @@ public enum GameState
     Story,
     Question1,
     Q1Labyrinth,
-    Question2,
+    //Question2,
     Question3,
     Question4,
     Result,
@@ -43,6 +43,8 @@ public class GameManager : NetworkBehaviour
     private GameState currentGameState = GameState.Menu;
     private bool hostReady = false;
     private bool guestReady = false;
+
+    public bool singlePlayerMode = false;
 
     #region GameState
 
@@ -141,7 +143,11 @@ public class GameManager : NetworkBehaviour
             TogglePlayerReadyClientRpc(senderClientIsHost, guestReady);
         }
 
-        if (hostReady == true && guestReady == true)
+        if (hostReady && guestReady)
+        {
+            bothReady = true;
+        }
+        if(hostReady && singlePlayerMode)
         {
             bothReady = true;
         }
@@ -208,11 +214,10 @@ public class GameManager : NetworkBehaviour
 
                 var indicatorInstance = Instantiate(indicator, guestPlayerObject.transform);
                 spawnedInstances.Add(indicatorInstance);
-
-                SpawnQ1InfoClientRpc();
-                TogglePlayerReadyServerRpc();
             }
         }
+        SpawnQ1InfoClientRpc();
+        TogglePlayerReadyServerRpc();
     }
 
     [ClientRpc]
@@ -299,6 +304,14 @@ public class GameManager : NetworkBehaviour
 
             }
         }
+
+        if (singlePlayerMode)
+        {
+            PlayerAnswers hostAnswers = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerAnswers>();
+            ResultManager resultManager = FindFirstObjectByType<ResultManager>();
+
+            resultManager.SpawnResults(hostAnswers, hostAnswers);
+        }
     }
 
 
@@ -354,9 +367,9 @@ public class GameManager : NetworkBehaviour
                 SpawnQ1Labyrinth();
                 break;
 
-            case GameState.Question2:
-                SpawnQuestion2();
-                break;
+            //case GameState.Question2:
+            //    SetGameStateServerRpc(GameState.Question3);
+            //    break;
 
             case GameState.Question3:
                 SpawnQuestion3();

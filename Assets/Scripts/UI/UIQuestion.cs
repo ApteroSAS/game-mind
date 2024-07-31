@@ -30,11 +30,11 @@ public class UIQuestion : MonoBehaviour
                 background.sprite = questionBackground[0];
                 textMesh.font = fontAssets[0];
                 break;
-            case GameState.Question2:
-                questionText = "What are the 3 fundamental values of a fulfilled couple?"; 
-                background.sprite = questionBackground[1];
-                textMesh.font = fontAssets[1];
-                break;
+            //case GameState.Question2:
+            //    questionText = "What are the 3 fundamental values of a fulfilled couple?"; 
+            //    background.sprite = questionBackground[1];
+            //    textMesh.font = fontAssets[1];
+            //    break;
             case GameState.Question3:
                 questionText = "What were the unifying moments in your relationship?"; 
                 background.sprite = questionBackground[2];

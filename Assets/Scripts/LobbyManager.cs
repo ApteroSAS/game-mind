@@ -20,10 +20,10 @@ public enum BuildType
 public class LobbyManager : MonoBehaviour
 {
     private Lobby currentLobby;
-    int maxPlayers = 2;
+    private readonly int maxPlayers = 2;
 
-    float timer = 0f;
-    float checkIfServer = 5f;
+    private float timer = 0f;
+    private readonly float timerCheckServer = 5f;
 
 
     public delegate void OnLobbyCreation(string code);
@@ -37,6 +37,19 @@ public class LobbyManager : MonoBehaviour
     public void OnLobbyCreationInvoke(string code)
     {
         onLobbyCreation.Invoke(code);
+    }
+
+    public delegate void OnLobbyJoin(string code);
+    private OnLobbyJoin onLobbyJoin;
+
+    public void OnLobbyJoinAddListener(OnLobbyJoin listener)
+    {
+        onLobbyJoin += listener;
+    }
+
+    public void OnLobbyJoinInvoke(string code)
+    {
+        onLobbyJoin.Invoke(code);
     }
 
     public delegate void OnLobbyLeave();
@@ -76,12 +89,17 @@ public class LobbyManager : MonoBehaviour
 
     private void Update()
     {
+        bool insideLobby = currentLobby != null;
+        Debug.Log("I'm inside a lobby:" + insideLobby);
+        if (!insideLobby) return;
+
         timer += Time.deltaTime;
-        if(timer >= checkIfServer)
+        if(timer >= timerCheckServer)
         {
             timer = 0f;
             if (!NetworkManager.Singleton.IsServer)
             {
+                Debug.Log("Someone left server and I'm alone");
                 OnLobbyLeaveInvoke();
             }
         }
@@ -163,7 +181,7 @@ public class LobbyManager : MonoBehaviour
         transport.SetRelayServerData(new RelayServerData(joinAllocation, buildTypeData));
 
         NetworkManager.Singleton.StartClient();
-        OnLobbyCreationInvoke(currentLobby.LobbyCode);
+        OnLobbyJoinInvoke(currentLobby.LobbyCode);
 
     }
 

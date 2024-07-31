@@ -19,9 +19,9 @@ public class UIReady : MonoBehaviour
             case GameState.Question1:
                 visible = true;
                 break;
-            case GameState.Question2:
-                visible = true;
-                break;
+            //case GameState.Question2:
+            //    visible = true;
+            //    break;
             case GameState.Question3:
                 visible = true;
                 break;

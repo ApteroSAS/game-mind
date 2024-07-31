@@ -14,6 +14,8 @@ public class MainMenu : MonoBehaviour
 
         startButton.onClick.AddListener(() => InvokeUIType(TypeOfUIWindow.LobbyMenu));
         creditsButton.onClick.AddListener(() => InvokeUIType(TypeOfUIWindow.CreditsMenu));
+
+        FindFirstObjectByType<LobbyManager>().OnLobbyLeaveAddListener(() => InvokeUIType(TypeOfUIWindow.MainMenu));
     }
 
     private void InvokeUIType(TypeOfUIWindow typeOfUiWindow)

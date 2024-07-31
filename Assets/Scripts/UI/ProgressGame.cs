@@ -30,6 +30,7 @@ public class ProgressGame : MonoBehaviour
     {
         ServerRpcParams serverRpcParams = default;
 
+        Debug.Log("Client " + NetworkManager.Singleton.LocalClientId + " wants to progress/unprogress");
         GameManager gameManager = FindFirstObjectByType<GameManager>();
         gameManager.OnPlayerReadyInvoke(serverRpcParams); 
     }
@@ -72,9 +73,9 @@ public class ProgressGame : MonoBehaviour
     {
         switch (gameState)
         {
-            case GameState.Question2:
-                canvasGroup.ToggleCanvasGroup(true);
-                break;
+            //case GameState.Question2:
+            //    canvasGroup.ToggleCanvasGroup(true);
+            //    break;
             case GameState.Question3:
                 canvasGroup.ToggleCanvasGroup(true);
                 break;

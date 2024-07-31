@@ -943,7 +943,6 @@ GameObject:
   - component: {fileID: 7474619854369257844}
   - component: {fileID: 8232011382361699575}
   - component: {fileID: 8180389010195889379}
-  - component: {fileID: -3266802310643831576}
   - component: {fileID: 2555082874003715274}
   m_Layer: 0
   m_Name: Q3_Result
@@ -1027,19 +1026,6 @@ MonoBehaviour:
   - {fileID: 6565273250824019855}
   - {fileID: 7212535903828705973}
   - {fileID: 6663496421424735936}
---- !u!114 &-3266802310643831576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8643374920404057242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnPoint: {fileID: 978085205989222978, guid: bc187ee7edf77bc4eb500a8b2c66fd96, type: 3}
 --- !u!54 &2555082874003715274
 Rigidbody:
   m_ObjectHideFlags: 0

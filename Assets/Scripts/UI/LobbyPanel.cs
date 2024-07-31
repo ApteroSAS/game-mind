@@ -11,6 +11,7 @@ public class LobbyPanel : MonoBehaviour
         LobbyManager lobbyManager = FindFirstObjectByType<LobbyManager>();
 
         lobbyManager.OnLobbyCreationAddListener(ChangePanel);
+        lobbyManager.OnLobbyJoinAddListener(ChangePanel);
         lobbyManager.OnLobbyLeaveAddListener(ResetPanel);
     }
 

@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3403080111263012750}
   - component: {fileID: 2330363432485516024}
   - component: {fileID: 3861313948612400077}
-  - component: {fileID: 3017740843545801626}
   m_Layer: 0
   m_Name: Q4_Result
   m_TagString: Untagged
@@ -148,19 +147,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slider: {fileID: 1545405711852620098}
   textureGuest: {fileID: 2100000, guid: efe2fd1b044282a49bedeca07bfd8a1a, type: 2}
---- !u!114 &3017740843545801626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2241810130262534342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc595474f134fae4bbf33172856f7d1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnPoint: {fileID: 5637926130464376572, guid: 378181da729ab04409a1c787ebea8757, type: 3}
 --- !u!1 &3297386363911973378
 GameObject:
   m_ObjectHideFlags: 0

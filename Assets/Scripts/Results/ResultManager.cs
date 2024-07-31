@@ -1,13 +1,10 @@
 using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 public class ResultManager : MonoBehaviour
 {
     private int result = 0;
-
-    private List<GameObject> spawnedInstances = new();
 
     [SerializeField] private int question1MaxValue;
     [SerializeField] private int question2MaxValue;
@@ -30,7 +27,6 @@ public class ResultManager : MonoBehaviour
 
     [SerializeField] private GameObject question4Result;
 
-    [SerializeField] private GameObject finalSay;
 
     public delegate void UpdateResult(int value);
     private UpdateResult updateResult;
@@ -49,7 +45,6 @@ public class ResultManager : MonoBehaviour
     private void Awake()
     {
         UpdateResultAddListener(AddToResult);
-        FindFirstObjectByType<LobbyManager>().OnLobbyLeaveAddListener(ClearInstances);
     }
 
     private void AddToResult(int value)
@@ -61,58 +56,67 @@ public class ResultManager : MonoBehaviour
     public void SpawnResults(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
         CalculateQuestions(hostAnswers, guestAnswers);
-        float offSetX = 3.5f;
 
-        SpawnQuestion1(hostAnswers, guestAnswers, offSetX);
-        //SpawnQuestion2(hostAnswers, guestAnswers, offSetX);
-        SpawnQuestion3(hostAnswers, guestAnswers, offSetX);
-        SpawnQuestion4(hostAnswers, guestAnswers, offSetX);
-
+        SpawnQuestion1(hostAnswers, guestAnswers);
+        SpawnQuestion3(hostAnswers, guestAnswers);
+        SpawnQuestion4(hostAnswers, guestAnswers);
     }
 
-    private void SpawnQuestion1(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers, float offSetX)
+    private void SpawnQuestion1(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        float offSetX = 1.5f;
+
         var question1Instance = Instantiate(question1Result);
         Vector3 q1pos = ApplyOffsetToVector3(question1Explanation.transform.position, offSetX);
         question1Instance.GetComponent<NetworkObject>().Spawn();
         question1Instance.GetComponent<Q1_Results>().OnSpawnClientRpc(q1pos, hostAnswers.NetworkQ1Answer.Value);
-        spawnedInstances.Add(question1Instance);
 
         question1Instance = Instantiate(question1Result);
         q1pos = ApplyOffsetToVector3(question1Explanation.transform.position, -offSetX);
         question1Instance.GetComponent<NetworkObject>().Spawn();
         question1Instance.GetComponent<Q1_Results>().OnSpawnClientRpc(q1pos, guestAnswers.NetworkQ1Answer.Value);
-        spawnedInstances.Add(question1Instance);
 
     }
 
-    private void SpawnQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers, float offSetX)
+    private void SpawnQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
     {
+        Debug.Log("doing question 3");
+        float offSetX = 2.5f;
+
         var question3PodestInstance = Instantiate(question3Podest);
         Vector3 podestPos = ApplyOffsetToVector3(question3Explanation.transform.position, offSetX);
+        podestPos.z += 1;
         question3PodestInstance.GetComponent<NetworkObject>().Spawn();
         question3PodestInstance.GetComponent<TeleportOnSpawn>().MoveOnSpawnClientRpc(podestPos);
-
         for (int i = 0; i < hostAnswers.NetworkQ3Blocks.Count; i++)
         {
             var question3BlockInstance = Instantiate(question3Result);
             Vector3 blockPos = ApplyOffsetToVector3(hostAnswers.NetworkQ3Blocks[i].PositionData, offSetX);
+            blockPos.z = podestPos.z;
             question3BlockInstance.GetComponent<NetworkObject>().Spawn();
             question3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(hostAnswers.NetworkQ3Blocks[i].SymbolData, blockPos);
         }
 
+        question3PodestInstance = Instantiate(question3Podest);
+        podestPos = ApplyOffsetToVector3(question3Explanation.transform.position, -offSetX);
+        podestPos.z += 1;
+        question3PodestInstance.GetComponent<NetworkObject>().Spawn();
+        question3PodestInstance.GetComponent<TeleportOnSpawn>().MoveOnSpawnClientRpc(podestPos);
         for (int i = 0; i < guestAnswers.NetworkQ3Blocks.Count; i++)
         {
             var question3BlockInstance = Instantiate(question3Result);
             Vector3 blockPos = ApplyOffsetToVector3(guestAnswers.NetworkQ3Blocks[i].PositionData, -offSetX);
+            blockPos.z = podestPos.z;
             question3BlockInstance.GetComponent<NetworkObject>().Spawn();
             question3BlockInstance.GetComponent<Q3_Results>().OnSpawnClientRpc(guestAnswers.NetworkQ3Blocks[i].SymbolData, blockPos);
         }
-
+        Debug.Log("end of spawnign question3");
     }
 
-    private void SpawnQuestion4(PlayerAnswers hostAnswers, PlayerAnswers questAnswers, float offSetX)
+    private void SpawnQuestion4(PlayerAnswers hostAnswers, PlayerAnswers questAnswers)
     {
+        float offSetX = 1f;
+
         var question4Instance = Instantiate(question4Result);
         Vector3 cauldronPos = ApplyOffsetToVector3(question4Explanation.transform.position, offSetX);
         question4Instance.GetComponent<NetworkObject>().Spawn();
@@ -146,7 +150,7 @@ public class ResultManager : MonoBehaviour
         q1InfoInstance.GetComponent<NetworkObject>().Spawn();
 
         Vector3 posQ1Info = q1InfoInstance.transform.position;
-        posQ1Info.y += 1.5f;
+        posQ1Info.y += 2f;
 
         if (hostAnswers.NetworkQ1Answer.Value == guestAnswers.NetworkQ1Answer.Value)
         {
@@ -166,8 +170,6 @@ public class ResultManager : MonoBehaviour
             miniLabyrinth.GetComponent<NetworkObject>().Spawn();
             miniLabyrinth.GetComponent<TeleportOnSpawn>().MoveOnSpawnClientRpc(posQ1Info);
         }
-
-
     }
 
     private void CalculateQuestion3(PlayerAnswers hostAnswers, PlayerAnswers guestAnswers)
@@ -237,18 +239,6 @@ public class ResultManager : MonoBehaviour
             UpdateResultInvokeClientRpc(question4MaxValue);
             q4InfoInstance.GetComponent<Q_Info>().SetFeedBackClientRpc(true);
         }
-    }
-
-    private void ClearInstances()
-    {
-        foreach (var instance in spawnedInstances)
-        {
-            if (instance != null)
-            {
-                Destroy(instance);
-            }
-        }
-        spawnedInstances.Clear();
     }
 
 }

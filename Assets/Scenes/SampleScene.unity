@@ -1972,6 +1972,7 @@ MonoBehaviour:
   question4Prefab: {fileID: 5469631913105629874, guid: cd7a2c404ef22a1429351572e088e142, type: 3}
   question4WandPrefab: {fileID: 2339831808183004767, guid: 6eab162ae526ba84a8a312a3f36952c0, type: 3}
   spawnedInstances: []
+  singlePlayerMode: 0
 --- !u!4 &256234087
 Transform:
   m_ObjectHideFlags: 0
@@ -5909,7 +5910,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 13}
   m_SizeDelta: {x: 240, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &794955133
@@ -6515,14 +6516,13 @@ MonoBehaviour:
   question2Explanation: {fileID: 4613441439916971935, guid: 302b8817500ad4242b41b0c44f00d3f2, type: 3}
   question3Explanation: {fileID: 4613441439916971935, guid: ddb26dca318508048ab2242e28c5b65a, type: 3}
   question4Explanation: {fileID: 4613441439916971935, guid: 39a30db99cffffd49afdbff20d6000e5, type: 3}
-  question1Result: {fileID: 0}
-  question1EasyMiniLabyrinth: {fileID: 0}
-  question1HardMiniLabyrinth: {fileID: 0}
+  question1Result: {fileID: 642391302030369028, guid: 9114a7104a952d54dbacaa564965bff8, type: 3}
+  question1EasyMiniLabyrinth: {fileID: 4885363905262424161, guid: 22afb246b64641b4f990a0c4ce4c4e80, type: 3}
+  question1HardMiniLabyrinth: {fileID: 5320996615833409751, guid: e54c93659b9cff44599fd481e6a85966, type: 3}
   question2Result: {fileID: 0}
-  question3Result: {fileID: 0}
-  question3Podest: {fileID: 0}
-  question4Result: {fileID: 0}
-  finalSay: {fileID: 0}
+  question3Result: {fileID: 8643374920404057242, guid: 5c876d496746fcb4cbe1d4c8dc3ef3ab, type: 3}
+  question3Podest: {fileID: 7709998548232873776, guid: dc1d5fd95a5572d439fc5235092c3147, type: 3}
+  question4Result: {fileID: 2241810130262534342, guid: a95731e1d28ea6c4da322b730dc10587, type: 3}
 --- !u!114 &871263448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14304,8 +14304,8 @@ SceneRoots:
   - {fileID: 256234087}
   - {fileID: 1123360887}
   - {fileID: 2078031574}
-  - {fileID: 166924758}
   - {fileID: 871263452}
+  - {fileID: 166924758}
   - {fileID: 110963365}
   - {fileID: 951957810}
   - {fileID: 410087041}
