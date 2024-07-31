@@ -10,7 +10,12 @@ public class DebugEditor : Editor
         DrawDefaultInspector();
 
         DebugManager debugManager = (DebugManager)target;
-        if (GUILayout.Button("Start singleplayer"))
+        if (GUILayout.Button("Start host"))
+        {
+            debugManager.StartHost();
+        }
+
+        if(GUILayout.Button("Start SingePlayer()"))
         {
             debugManager.StartSinglePlayer();
         }

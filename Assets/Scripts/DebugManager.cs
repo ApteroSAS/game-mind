@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class DebugManager : MonoBehaviour
 {
+    public void StartHost()
+    {
+        if(!NetworkManager.Singleton.IsServer)
+            FindFirstObjectByType<LobbyManager>().CreateLobby();
+    }
+
     public void StartSinglePlayer()
     {
         if (NetworkManager.Singleton.IsServer)

@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class TutorialMenu : MonoBehaviour
@@ -49,6 +50,9 @@ public class TutorialMenu : MonoBehaviour
                 {
                     tutorialDone = true;
                     canvasGroup.ToggleCanvasGroup(false);
+
+                    ServerRpcParams serverRpcParams = default;
+                    FindFirstObjectByType<GameManager>().OnPlayerReadyInvoke(serverRpcParams);
                 }
             }
         }

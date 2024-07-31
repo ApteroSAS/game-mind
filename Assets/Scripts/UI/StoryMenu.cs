@@ -68,9 +68,6 @@ public class StoryMenu : MonoBehaviour
 
         FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.TutorialMenu);
         FindFirstObjectByType<LobbyManager>().OnUITypeChangeInvoke(TypeOfUIWindow.InGameMenu);
-
-        ServerRpcParams serverRpcParams = default;
-        FindFirstObjectByType<GameManager>().OnPlayerReadyInvoke(serverRpcParams);
     }
 
     private void PlayVideo(GameState gameState)
@@ -92,8 +89,10 @@ public class StoryMenu : MonoBehaviour
     {
         ResetScene();
 
-        string proxyUrl = "https://cors-anywhere.herokuapp.com/https://meet.aptero.co/files/public/Video/MIND-INTRO-video-low.mp4";
-        storyVideo.url = proxyUrl; // Direct link to the video file
+        string proxy = "https://cors-anywhere.herokuapp.com/";
+        string url = "https://meet.aptero.co/files/public/Video/MIND-INTRO-video-low.mp4";
+
+        storyVideo.url = proxy + url;
         storyVideo.Prepare();
 
         while (!storyVideo.isPrepared)
